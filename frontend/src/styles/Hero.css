@@ -1,0 +1,118 @@
+.hero-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 0 10vw;
+  position: relative;
+}
+
+.hero-content {
+  flex: 1;
+  z-index: 2;
+  max-width: 600px;
+}
+
+.greeting {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
+}
+
+.name {
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.role {
+  font-size: 2rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.bio {
+  font-size: 1.1rem;
+  color: #8892b0;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--accent-color);
+}
+
+.btn-outline:hover {
+  background: rgba(0, 123, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.hero-3d {
+  flex: 1;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+@media (max-width: 968px) {
+  .hero-section {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding-top: 100px;
+  }
+  
+  .hero-content {
+    margin-top: -50px;
+  }
+
+  .cta-buttons {
+    justify-content: center;
+  }
+  
+  .name {
+    font-size: 3rem;
+  }
+  
+  .role {
+    font-size: 1.5rem;
+  }
+
+  .hero-3d {
+    height: 400px;
+    width: 100%;
+  }
+}

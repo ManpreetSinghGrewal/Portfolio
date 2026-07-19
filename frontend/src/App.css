@@ -1,0 +1,29 @@
+.App {
+  width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+section {
+  padding: 100px 10vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section-title {
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: 80px 5vw;
+  }
+  .section-title {
+    font-size: 2.2rem;
+  }
+}

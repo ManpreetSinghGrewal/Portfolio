@@ -1,0 +1,68 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem 10vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+  padding: 1rem 10vw;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.nav-brand a {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+}
+
+.nav-brand .dot {
+  color: var(--accent-color);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--accent-color);
+}
+
+.nav-cta {
+  background: var(--glass-bg);
+  border: 1px solid var(--accent-color) !important;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  color: var(--accent-color) !important;
+}
+
+.nav-cta:hover {
+  background: var(--accent-color);
+  color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}
