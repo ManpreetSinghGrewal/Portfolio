@@ -15,15 +15,30 @@ const AnimatedShape = () => {
   return (
     <Sphere visible args={[1, 100, 200]} scale={2.5} ref={meshRef}>
       <MeshDistortMaterial
-        color="#00d2ff"
+        color="#0056b3"
         attach="material"
         distort={0.4}
         speed={2}
-        roughness={0.2}
-        metalness={0.8}
+        roughness={0.1}
+        metalness={0.5}
       />
     </Sphere>
   );
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
 };
 
 const Hero = () => {
@@ -31,21 +46,21 @@ const Hero = () => {
     <section id="home" className="hero-section">
       <div className="hero-content">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <h2 className="greeting">Hi, I'm</h2>
-          <h1 className="name gradient-text">Manpreet Singh</h1>
-          <h3 className="role">Full-Stack Engineer & AI Enthusiast</h3>
-          <p className="bio">
+          <motion.h2 variants={itemVariants} className="greeting">Hi, I'm</motion.h2>
+          <motion.h1 variants={itemVariants} className="name gradient-text">Manpreet Singh</motion.h1>
+          <motion.h3 variants={itemVariants} className="role">Full-Stack Engineer & AI Enthusiast</motion.h3>
+          <motion.p variants={itemVariants} className="bio">
             Top 5% CS Student at Chitkara University. <br/>
             I build modern, scalable web applications and AI-powered solutions.
-          </p>
-          <div className="cta-buttons">
+          </motion.p>
+          <motion.div variants={itemVariants} className="cta-buttons">
             <a href="#projects" className="btn btn-primary">View Work</a>
             <a href="#contact" className="btn btn-outline">Contact Me</a>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
       
