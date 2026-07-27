@@ -1,16 +1,20 @@
 .footer {
-  padding: 2rem 10vw;
-  margin-top: 4rem;
-  border-bottom: none;
-  border-left: none;
-  border-right: none;
-  border-radius: 0;
+  padding: 2.5rem 5vw;
+  margin: 4rem 5vw 2.5rem 5vw;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.4) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .footer-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .footer-logo h2 {
