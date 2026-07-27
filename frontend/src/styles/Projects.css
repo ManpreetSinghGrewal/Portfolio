@@ -63,6 +63,32 @@
   letter-spacing: 0.5px;
 }
 
+.project-actions {
+  margin-top: 2rem;
+  transform: translateZ(50px);
+}
+
+.live-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.6rem;
+  background: var(--accent-gradient);
+  color: #fff !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.live-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 86, 179, 0.4);
+}
+
 @media (max-width: 768px) {
   .project-card {
     padding: 2rem;

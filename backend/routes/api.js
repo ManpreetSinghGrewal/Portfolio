@@ -31,21 +31,46 @@ router.post('/contact', async (req, res) => {
 // @desc    Get portfolio projects (mocked for now)
 // @access  Public
 router.get('/projects', (req, res) => {
-  const projects = [
-    {
-      id: 1,
-      title: 'Quiz Arena | Full-Stack Quiz Platform',
-      description: 'Built a quiz platform for GATE and UCA aspirants featuring Normal Quiz, Daily Challenge, Battle Mode, and Speed Quiz. Developed backend APIs for authentication, quiz management, score tracking, and data persistence using Node.js and MongoDB. Integrated Gemini API and contributed to responsive frontend development using React.js.',
-      techStack: ['React.js', 'Node.js', 'MongoDB', 'Gemini API']
-    },
-    {
-      id: 2,
-      title: 'SiteFlow AI | AI-Powered Website Generator',
-      description: 'Developed an AI-powered platform that transforms business descriptions into complete website structures and content. Built responsive dashboards, project management views, navigation systems, and AI chat interfaces using React.js and TypeScript. Created reusable and scalable UI components with Tailwind CSS and shadcn/ui. Integrated backend services with Express.js and MongoDB.',
-      techStack: ['React.js', 'TypeScript', 'Tailwind CSS', 'Express.js', 'MongoDB']
-    }
-  ];
-  res.json(projects);
+  const data = {
+    internshipProjects: [
+      {
+        id: 'int-1',
+        title: 'Algoryx Commun Web Experience',
+        description: 'An interactive web experience showcasing dynamic user flows and modern UI/UX principles built during my internship at Algoryx Technology.',
+        techStack: ['React.js', 'Animations', 'Vercel', 'UI/UX'],
+        liveUrl: 'https://web-experience-using-algoryx-commun.vercel.app/#'
+      },
+      {
+        id: 'int-2',
+        title: 'Scroll-Based Animated Landing Page',
+        description: 'A highly engaging, interactive landing page leveraging immersive scroll animations, modern parallax transitions, and reactive UI design.',
+        techStack: ['React.js', 'CSS Animations', 'Vercel', 'Frontend'],
+        liveUrl: 'https://scroll-based-animated-landing-page.vercel.app/'
+      },
+      {
+        id: 'int-3',
+        title: 'React Dashboard Development',
+        description: 'A dynamic, data-driven analytics and project development dashboard designed for responsiveness and real-time visualization.',
+        techStack: ['React.js', 'Dashboard', 'Netlify', 'State Management'],
+        liveUrl: 'https://react-dashboard-development.netlify.app/'
+      }
+    ],
+    featuredProjects: [
+      {
+        id: 1,
+        title: 'Quiz Arena | Full-Stack Quiz Platform',
+        description: 'Built a quiz platform for GATE and UCA aspirants featuring Normal Quiz, Daily Challenge, Battle Mode, and Speed Quiz. Developed backend APIs for authentication, quiz management, score tracking, and data persistence using Node.js and MongoDB. Integrated Gemini API and contributed to responsive frontend development using React.js.',
+        techStack: ['React.js', 'Node.js', 'MongoDB', 'Gemini API']
+      },
+      {
+        id: 2,
+        title: 'SiteFlow AI | AI-Powered Website Generator',
+        description: 'Developed an AI-powered platform that transforms business descriptions into complete website structures and content. Built responsive dashboards, project management views, navigation systems, and AI chat interfaces using React.js and TypeScript. Created reusable and scalable UI components with Tailwind CSS and shadcn/ui. Integrated backend services with Express.js and MongoDB.',
+        techStack: ['React.js', 'TypeScript', 'Tailwind CSS', 'Express.js', 'MongoDB']
+      }
+    ]
+  };
+  res.json(data);
 });
 
 module.exports = router;
