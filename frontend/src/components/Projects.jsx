@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import '../styles/Projects.css';
 
 const ProjectCard = ({ project, index }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [15, -15]);
-  const rotateY = useTransform(x, [-100, 100], [-15, 15]);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-200, 200], [8, -8]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-200, 200], [-8, 8]), { stiffness: 150, damping: 20 });
 
   const handleMouseMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    x.set(event.clientX - centerX);
-    y.set(event.clientY - centerY);
+    mouseX.set(event.clientX - centerX);
+    mouseY.set(event.clientY - centerY);
   };
 
   const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
+    mouseX.set(0);
+    mouseY.set(0);
   };
 
   return (
@@ -28,13 +29,13 @@ const ProjectCard = ({ project, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6, delay: index * 0.2 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <motion.div
         className="project-card glass-panel"
-        style={{ x, y, rotateX, rotateY, z: 100 }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        whileHover={{ scale: 1.02 }}
+        style={{ rotateX, rotateY }}
+        whileHover={{ scale: 1.01 }}
       >
         <div className="project-content">
           <h3 className="project-title">{project.title}</h3>
