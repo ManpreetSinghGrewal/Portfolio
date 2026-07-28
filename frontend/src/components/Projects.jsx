@@ -97,7 +97,8 @@ const Projects = () => {
       id: 1,
       title: 'Quiz Arena | Full-Stack Quiz Platform',
       description: 'Built a quiz platform for GATE and UCA aspirants featuring Normal Quiz, Daily Challenge, Battle Mode, and Speed Quiz. Developed backend APIs for authentication, quiz management, score tracking, and data persistence using Node.js and MongoDB. Integrated Gemini API and contributed to responsive frontend development using React.js.',
-      techStack: ['React.js', 'Node.js', 'MongoDB', 'Gemini API']
+      techStack: ['React.js', 'Node.js', 'MongoDB', 'Gemini API'],
+      liveUrl: 'https://quiz-arena-lake.vercel.app/'
     },
     {
       id: 2,
