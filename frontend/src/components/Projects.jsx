@@ -104,7 +104,8 @@ const Projects = () => {
       id: 2,
       title: 'SiteFlow AI | AI-Powered Website Generator',
       description: 'Developed an AI-powered platform that transforms business descriptions into complete website structures and content. Built responsive dashboards, project management views, navigation systems, and AI chat interfaces using React.js and TypeScript. Created reusable and scalable UI components with Tailwind CSS and shadcn/ui. Integrated backend services with Express.js and MongoDB.',
-      techStack: ['React.js', 'TypeScript', 'Tailwind CSS', 'Express.js', 'MongoDB']
+      techStack: ['React.js', 'TypeScript', 'Tailwind CSS', 'Express.js', 'MongoDB'],
+      liveUrl: 'https://site-flow-ai-eight.vercel.app'
     }
   ];
 
