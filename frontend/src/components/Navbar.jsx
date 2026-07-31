@@ -3,6 +3,7 @@ import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,17 +13,32 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const toggleMobileMenu = () => {
+    setIsMobileOpen(!isMobileOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileOpen(false);
+  };
+
   return (
     <nav className={`navbar ${scrolled ? 'scrolled glass-panel' : ''}`}>
       <div className="nav-brand">
-        <a href="#home">MS<span className="dot">.</span></a>
+        <a href="#home" onClick={closeMobileMenu}>MS<span className="dot">.</span></a>
       </div>
-      <ul className="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact" className="nav-cta">Let's Talk</a></li>
+      
+      <div className={`mobile-menu-btn ${isMobileOpen ? 'active' : ''}`} onClick={toggleMobileMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <ul className={`nav-links ${isMobileOpen ? 'mobile-open' : ''}`}>
+        <li><a href="#home" onClick={closeMobileMenu}>Home</a></li>
+        <li><a href="#about" onClick={closeMobileMenu}>About</a></li>
+        <li><a href="#skills" onClick={closeMobileMenu}>Skills</a></li>
+        <li><a href="#projects" onClick={closeMobileMenu}>Projects</a></li>
+        <li><a href="#contact" className="nav-cta" onClick={closeMobileMenu}>Let's Talk</a></li>
       </ul>
     </nav>
   );
