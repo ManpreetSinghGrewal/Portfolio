@@ -106,6 +106,13 @@ const Projects = () => {
       description: 'Developed an AI-powered platform that transforms business descriptions into complete website structures and content. Built responsive dashboards, project management views, navigation systems, and AI chat interfaces using React.js and TypeScript. Created reusable and scalable UI components with Tailwind CSS and shadcn/ui. Integrated backend services with Express.js and MongoDB.',
       techStack: ['React.js', 'TypeScript', 'Tailwind CSS', 'Express.js', 'MongoDB'],
       liveUrl: 'https://site-flow-ai-eight.vercel.app/'
+    },
+    {
+      id: 3,
+      title: 'HostelAdda | Real-Time Peer Video & Hostel Lounge Platform',
+      description: 'Built an exclusive real-time video matchmaking and community platform for university students featuring Omegle-style 1-on-1 random peer matching and dedicated Hostel Block lounges. Developed backend APIs and WebRTC signaling with Socket.io for low-latency peer-to-peer audio/video streaming, real-time presence indicators, and live messaging. Integrated Brevo API for 6-digit email OTP verification alongside Google OAuth 2.0 SSO, with MongoDB for user management and chat persistence.',
+      techStack: ['React.js', 'Node.js', 'WebRTC', 'Socket.io', 'MongoDB', 'Brevo API'],
+      liveUrl: 'https://hosteladda-tawny.vercel.app/'
     }
   ];
 
