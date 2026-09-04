@@ -2,25 +2,17 @@ const express = require('express');
 const router = express.Router();
 let defaultMasterResume = require('../data/masterResume');
 
-// In-memory cache for user edits if updated during session
 let activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
 
-// Curated technical keywords dictionary for ATS extraction
 const TECH_KEYWORDS = [
   'react', 'react.js', 'node', 'node.js', 'typescript', 'javascript', 'express', 'express.js',
   'mongodb', 'mongoose', 'sql', 'postgresql', 'mysql', 'redis', 'webrtc', 'socket.io',
   'rest', 'restful', 'api', 'apis', 'graphql', 'next.js', 'tailwind', 'tailwind css',
-  'shadcn', 'html', 'html5', 'css', 'css3', 'sass', 'git', 'github', 'ci/cd', 'docker',
-  'kubernetes', 'aws', 'gcp', 'azure', 'linux', 'bash', 'c++', 'python', 'java',
-  'data structures', 'algorithms', 'dsa', 'system design', 'microservices', 'agile', 'scrum',
-  'testing', 'jest', 'vitest', 'unit testing', 'performance optimization', 'responsive design',
-  'seo', 'web security', 'oauth', 'jwt', 'authentication', 'state management', 'redux',
-  'gemini', 'openai', 'llm', 'generative ai', 'ai', 'machine learning'
+  'html', 'html5', 'css', 'css3', 'git', 'github', 'docker', 'aws', 'linux', 'c++', 'java',
+  'python', 'data structures', 'algorithms', 'dsa', 'system design', 'jwt', 'oauth',
+  'gemini', 'ai', 'machine learning', 'frontend', 'backend', 'full-stack', 'fullstack'
 ];
 
-/**
- * Extract technical & role keywords found in the Job Description
- */
 function extractKeywords(jdText) {
   if (!jdText) return [];
   const lower = jdText.toLowerCase();
@@ -43,180 +35,130 @@ function extractKeywords(jdText) {
   return Array.from(new Set(matched));
 }
 
-/**
- * Calculate ATS Match Score based on Master Skills vs JD Keywords
- */
-function computeAtsScore(jdKeywords, masterData) {
+function computeAtsScore(jdKeywords) {
   if (!jdKeywords || jdKeywords.length === 0) {
-    return { score: 85, matched: ['Full-Stack', 'React', 'Node.js'], missing: [] };
+    return { score: 88, matched: ['Full-Stack', 'React.js', 'Node.js'], missing: [] };
   }
 
-  const allSkills = [
-    ...masterData.skills.languages,
-    ...masterData.skills.frontend,
-    ...masterData.skills.backend,
-    ...masterData.skills.toolsAndCloud,
-    ...masterData.skills.coreCS
-  ].map(s => s.toLowerCase());
+  const profileKeywords = [
+    'react', 'react.js', 'node', 'node.js', 'express', 'express.js', 'mongodb', 'javascript',
+    'c++', 'java', 'html', 'css', 'git', 'github', 'socket.io', 'gemini', 'tailwind', 'tailwind css',
+    'webrtc', 'jwt', 'rest', 'api', 'dsa', 'algorithms', 'linux', 'python'
+  ];
 
   const matched = [];
   const missing = [];
 
   jdKeywords.forEach(kw => {
-    const isMatched = allSkills.some(skill => skill.includes(kw) || kw.includes(skill.split(' ')[0]));
-    if (isMatched) {
+    if (profileKeywords.some(pk => pk.includes(kw) || kw.includes(pk))) {
       matched.push(kw);
     } else {
       missing.push(kw);
     }
   });
 
-  // Calculate score (normalized between 70% and 98%)
-  const ratio = jdKeywords.length > 0 ? matched.length / jdKeywords.length : 0.8;
-  const rawScore = Math.round(65 + (ratio * 32));
-  const score = Math.min(98, Math.max(70, rawScore));
+  const ratio = jdKeywords.length > 0 ? matched.length / jdKeywords.length : 0.85;
+  const rawScore = Math.round(70 + (ratio * 28));
+  const score = Math.min(98, Math.max(72, rawScore));
 
   return { score, matched, missing };
 }
 
-/**
- * Deterministic, intelligent Rule-Based ATS Tailoring
- */
 function tailorRuleBased(jdText, targetRole, masterData) {
   const jdKeywords = extractKeywords(jdText);
-  const { score, matched, missing } = computeAtsScore(jdKeywords, masterData);
+  const { score, matched, missing } = computeAtsScore(jdKeywords);
 
-  const roleTitle = targetRole || (jdKeywords.includes('frontend') ? 'Frontend Software Engineer' :
-                                   jdKeywords.includes('backend') ? 'Backend Software Engineer' :
-                                   'Full-Stack Software Engineer');
+  const roleTitle = targetRole || (jdKeywords.includes('frontend') ? 'Frontend Developer' :
+                                   jdKeywords.includes('backend') ? 'Backend Developer' :
+                                   'Full-Stack Developer');
 
-  // Tailor Professional Summary
-  const topMatchedKeywords = matched.slice(0, 5).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
-  const tailoredSummary = `Results-driven ${roleTitle} and Top 5% Computer Science undergraduate (CGPA 9.26) with specialized expertise in ${topMatchedKeywords || 'React.js, Node.js, and TypeScript'}. Demonstrated record of architecting high-performance, real-time web solutions and AI-driven platforms, backed by 250+ solved algorithmic challenges on LeetCode and successful software engineering internship delivery.`;
+  // Tailor Career Objective to match sample resume tone
+  const primarySkills = matched.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
+  const tailoredObjective = `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${roleTitle.toLowerCase()} with focus on ${primarySkills || 'modern web technologies'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`;
 
-  // Prioritize Skills based on JD matches
-  const prioritize = (list) => {
-    return [...list].sort((a, b) => {
-      const aMatch = jdKeywords.some(kw => a.toLowerCase().includes(kw));
-      const bMatch = jdKeywords.some(kw => b.toLowerCase().includes(kw));
-      if (aMatch && !bMatch) return -1;
-      if (!aMatch && bMatch) return 1;
-      return 0;
-    });
-  };
+  // Select top 2 projects best matching the JD
+  const candidateProjects = [...masterData.projects];
+  candidateProjects.sort((a, b) => {
+    const aLower = (a.title + ' ' + a.techStack + ' ' + a.bullets.join(' ')).toLowerCase();
+    const bLower = (b.title + ' ' + b.techStack + ' ' + b.bullets.join(' ')).toLowerCase();
 
-  const tailoredSkills = {
-    languages: prioritize(masterData.skills.languages),
-    frontend: prioritize(masterData.skills.frontend),
-    backend: prioritize(masterData.skills.backend),
-    toolsAndCloud: prioritize(masterData.skills.toolsAndCloud),
-    coreCS: prioritize(masterData.skills.coreCS)
-  };
-
-  // Prioritize and tailor Projects
-  const prioritizedProjects = [...masterData.projects].sort((a, b) => {
-    const aCount = a.techStack.filter(t => jdKeywords.some(kw => t.toLowerCase().includes(kw))).length;
-    const bCount = b.techStack.filter(t => jdKeywords.some(kw => t.toLowerCase().includes(kw))).length;
-    return bCount - aCount;
+    const aMatches = jdKeywords.filter(k => aLower.includes(k)).length;
+    const bMatches = jdKeywords.filter(k => bLower.includes(k)).length;
+    return bMatches - aMatches;
   });
+
+  const selectedProjects = candidateProjects.slice(0, 2);
 
   return {
     tailoredResume: {
       ...masterData,
-      personalInfo: {
-        ...masterData.personalInfo,
-        title: roleTitle
-      },
-      summary: tailoredSummary,
-      skills: tailoredSkills,
-      projects: prioritizedProjects
+      careerObjective: tailoredObjective,
+      projects: selectedProjects
     },
     matchScore: score,
     matchedKeywords: matched,
-    missingKeywords: missing.slice(0, 8),
+    missingKeywords: missing.slice(0, 6),
     mode: 'ats-engine'
   };
 }
 
-/**
- * Gemini-Powered Dynamic ATS Tailoring
- */
 async function tailorWithGemini(apiKey, jdText, targetRole, masterData) {
   let GoogleGenerativeAI;
   try {
     const geminiPkg = require('@google/generative-ai');
     GoogleGenerativeAI = geminiPkg.GoogleGenerativeAI;
   } catch (err) {
-    console.warn('Gemini package not yet installed, falling back to rule-based ATS engine.');
+    console.warn('Gemini package not available, falling back to rule-based ATS engine.');
     return tailorRuleBased(jdText, targetRole, masterData);
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Prefer standard model with fast response
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `
-You are an expert Technical Recruiter and ATS (Applicant Tracking System) Optimization Specialist.
+You are an expert Technical Recruiter and ATS Optimization Specialist.
 You have been provided with:
 1. Target Job Description (JD)
 2. Target Role (optional)
-3. Master Profile data for candidate "Manpreet Singh".
+3. Master Candidate Profile for "Manpreet Singh", formatted according to his exact LaTeX academic sample resume.
 
 TASK:
-Tailor the candidate's resume for this specific Job Description to maximize ATS match score while strictly preserving genuine truthfulness and authentic achievements (CGPA 9.26, Chitkara University, Algoryx Technology internship, LeetCode 250+, HostelAdda, SiteFlow AI, Quiz Arena).
+Tailor the candidate's resume for this specific Job Description. Strictly keep the exact same section names, education table, contact info, and genuine facts (Chitkara University B.E. CSE 2024–2028, Algoryx Technologies internship, LeetCode 300+, hackathons, certifications).
 
-Output ONLY valid, parseable JSON with no markdown wrapping or backticks. Schema:
+Only tailor:
+1. "careerObjective": 2-3 concise sentences tailored specifically to the target role and key technical requirements of this JD, in the exact voice of the sample.
+2. "technicalSkills": Order and emphasize skills matching the JD.
+3. "projects": Select the 2 most relevant projects among Quiz Arena, SiteFlow AI, and HostelAdda, fine-tuning bolded keywords in bullet points to highlight skills mentioned in the JD.
+
+Output ONLY valid, parseable JSON with NO markdown formatting, NO backticks:
 {
   "tailoredResume": {
     "personalInfo": {
       "name": "Manpreet Singh",
-      "title": "Targeted Role Title matching JD",
-      "email": "manpreet1405.becse24@chitkara.edu.in",
       "phone": "+91 7888344778",
-      "location": "Punjab, India",
+      "email": "manpreetsgrewal5911@gmail.com",
+      "location": "Dehlon, Punjab, India",
       "linkedin": "https://linkedin.com/in/manpreet-singh",
-      "github": "https://github.com/ManpreetSinghGrewal",
-      "portfolio": "https://portfolio.dev"
+      "github": "https://github.com/ManpreetSinghGrewal"
     },
-    "summary": "Impactful 3-4 sentence professional summary tailored specifically to the JD keywords and required competencies.",
-    "skills": {
-      "languages": ["Languages prioritized for JD"],
-      "frontend": ["Frontend technologies prioritized for JD"],
-      "backend": ["Backend technologies prioritized for JD"],
-      "toolsAndCloud": ["Tools prioritized for JD"],
-      "coreCS": ["Core CS topics"]
-    },
-    "experience": [
-      {
-        "role": "Software Engineering Intern",
-        "company": "Algoryx Technology",
-        "location": "Remote",
-        "period": "2024 – Present",
-        "bullets": ["3 bullet points tailored to emphasize competencies matching the JD"]
-      }
-    ],
-    "projects": [
-      {
-        "title": "Project Title",
-        "role": "Role",
-        "techStack": ["Relevant tech stack"],
-        "liveUrl": "URL",
-        "bullets": ["3-4 bullet points highlighting metrics and JD technologies"]
-      }
-    ],
-    "education": [...],
-    "achievements": [...]
+    "careerObjective": "...",
+    "education": ${JSON.stringify(masterData.education)},
+    "technicalSkills": ${JSON.stringify(masterData.technicalSkills)},
+    "experience": ${JSON.stringify(masterData.experience)},
+    "projects": [ ...two most relevant projects with bolded keywords in bullets... ],
+    "achievements": ${JSON.stringify(masterData.achievements)},
+    "certifications": ${JSON.stringify(masterData.certifications)}
   },
-  "matchScore": 92,
+  "matchScore": 94,
   "matchedKeywords": ["list", "of", "matched", "keywords"],
-  "missingKeywords": ["list", "of", "missing", "keywords", "for", "user", "reference"]
+  "missingKeywords": ["list", "of", "missing", "keywords"]
 }
 
 JOB DESCRIPTION:
 ${jdText}
 
 TARGET ROLE:
-${targetRole || 'Software Engineer / Full Stack Developer'}
+${targetRole || 'Full-Stack Developer'}
 
 MASTER CANDIDATE DATA:
 ${JSON.stringify(masterData, null, 2)}
@@ -225,7 +167,6 @@ ${JSON.stringify(masterData, null, 2)}
   try {
     const result = await model.generateContent(prompt);
     const responseText = result.response.text().trim();
-    // Clean potential markdown fences
     const cleanJson = responseText.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
     const parsed = JSON.parse(cleanJson);
     return {
@@ -233,19 +174,17 @@ ${JSON.stringify(masterData, null, 2)}
       mode: 'gemini'
     };
   } catch (err) {
-    console.error('Gemini generation error, falling back to rule-based engine:', err.message);
+    console.error('Gemini error, using rule-based engine:', err.message);
     return tailorRuleBased(jdText, targetRole, masterData);
   }
 }
 
 // @route   GET /api/resume/master
-// @desc    Get current master resume
 router.get('/master', (req, res) => {
   res.json({ success: true, masterResume: activeMasterResume });
 });
 
 // @route   POST /api/resume/tailor
-// @desc    Analyze Job Description and return tailored resume JSON
 router.post('/tailor', async (req, res) => {
   try {
     const { jobDescription, targetRole, customMaster, apiKey } = req.body;
@@ -272,7 +211,6 @@ router.post('/tailor', async (req, res) => {
 });
 
 // @route   POST /api/resume/reset-master
-// @desc    Reset master resume back to default
 router.post('/reset-master', (req, res) => {
   activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
   res.json({ success: true, message: 'Master resume reset to default', masterResume: activeMasterResume });
