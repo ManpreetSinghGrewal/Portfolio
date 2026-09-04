@@ -27,10 +27,16 @@ function extractKeywords(jdText) {
   const matched = [];
 
   TECH_KEYWORDS.forEach(keyword => {
-    // Match whole words or standard expressions
-    const regex = new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\b`, 'i');
-    if (regex.test(lower)) {
-      matched.push(keyword);
+    const isSpecial = /[^a-z0-9]/i.test(keyword);
+    if (isSpecial) {
+      if (lower.includes(keyword.toLowerCase())) {
+        matched.push(keyword);
+      }
+    } else {
+      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+      if (regex.test(lower)) {
+        matched.push(keyword);
+      }
     }
   });
 

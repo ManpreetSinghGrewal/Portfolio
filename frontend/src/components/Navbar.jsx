@@ -90,6 +90,9 @@ const Navbar = () => {
             onClick={closeMobileMenu}
           >
             <span className="internship-dot"></span>
+            <span>Internship</span>
+          </a>
+        </li>
         <li>
           <a 
             href="#resume-studio" 
