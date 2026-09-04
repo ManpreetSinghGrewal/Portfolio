@@ -5,7 +5,7 @@
   transform: translateX(-50%);
   width: 90%;
   max-width: 1200px;
-  padding: 1.2rem 2.5rem;
+  padding: 1.1rem 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,7 +21,7 @@
 
 .navbar.scrolled {
   top: 0.8rem;
-  padding: 0.9rem 2rem;
+  padding: 0.85rem 2rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
   box-shadow: 0 15px 40px -10px rgba(15, 23, 42, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
@@ -41,7 +41,7 @@
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 2.2rem;
+  gap: 1.8rem;
   align-items: center;
 }
 
@@ -50,10 +50,69 @@
   font-weight: 600;
   color: var(--text-primary);
   transition: color 0.3s, transform 0.2s;
+  position: relative;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links a.active-nav {
   color: var(--accent-color);
+}
+
+/* Distinctive Differentiated Internship Navigation Badge */
+.nav-link-internship {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.9rem;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, rgba(99, 102, 241, 0.08) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  border-radius: 20px;
+  color: var(--accent-color) !important;
+  font-size: 0.88rem !important;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.nav-link-internship:hover {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.18) 0%, rgba(99, 102, 241, 0.14) 100%);
+  border-color: rgba(2, 132, 199, 0.55);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.22);
+  transform: translateY(-1px);
+}
+
+.nav-link-internship.active {
+  background: var(--accent-gradient) !important;
+  color: #ffffff !important;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+.internship-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.6);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.nav-link-internship.active .internship-dot {
+  background-color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
+  }
 }
 
 .nav-cta {

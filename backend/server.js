@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const apiRoutes = require('./routes/api');
+const resumeRoutes = require('./routes/resume');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ connectDB();
 
 // Routes
 app.use('/api', apiRoutes);
+app.use('/api/resume', resumeRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
