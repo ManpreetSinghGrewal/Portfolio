@@ -7,7 +7,7 @@
   min-height: 100vh;
   padding: 0 10vw !important;
   position: relative;
-  gap: 3rem;
+  gap: 3.5rem;
 }
 
 .hero-content {
@@ -93,7 +93,7 @@
 }
 
 /* =========================================================
-   HERO VISUALS: LIQUID GLASS AVATAR FRAME
+   HERO VISUALS: CIRCULAR AVATAR & FLOATING SKILLS
    ========================================================= */
 .hero-visuals {
   flex: 1;
@@ -102,6 +102,7 @@
   justify-content: center;
   position: relative;
   z-index: 2;
+  padding: 30px;
 }
 
 .hero-avatar-frame {
@@ -126,8 +127,8 @@
 /* Ambient glow that blends seamlessly with portfolio background */
 .hero-avatar-ambient-glow {
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 410px;
+  height: 410px;
   border-radius: 50%;
   background: radial-gradient(
     circle, 
@@ -160,7 +161,7 @@
   height: 390px;
   border-radius: 50%;
   padding: 10px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(2, 132, 199, 0.18) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(2, 132, 199, 0.2) 100%);
   border: 1.5px solid rgba(255, 255, 255, 0.95);
   box-shadow: 
     0 25px 60px -15px rgba(15, 23, 42, 0.16),
@@ -193,9 +194,111 @@
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
 }
 
+/* =========================================================
+   ORBITING / RANDOMLY APPEARING SKILLS
+   ========================================================= */
+.skill-orbit-node {
+  position: absolute;
+  z-index: 4;
+}
 
+/* 6 Anchor Positions around Circumference */
+.orbit-slot-0 {
+  top: 15px;
+  left: -20px;
+  animation: floatNode0 5s ease-in-out infinite;
+}
 
-/* Responsive */
+.orbit-slot-1 {
+  top: 20px;
+  right: -25px;
+  animation: floatNode1 5.6s ease-in-out infinite 0.7s;
+}
+
+.orbit-slot-2 {
+  top: 50%;
+  right: -50px;
+  transform: translateY(-50%);
+  animation: floatNode2 5.2s ease-in-out infinite 1.4s;
+}
+
+.orbit-slot-3 {
+  bottom: 25px;
+  right: -20px;
+  animation: floatNode3 5.8s ease-in-out infinite 2.1s;
+}
+
+.orbit-slot-4 {
+  bottom: 20px;
+  left: -25px;
+  animation: floatNode4 5.4s ease-in-out infinite 2.8s;
+}
+
+.orbit-slot-5 {
+  top: 50%;
+  left: -45px;
+  transform: translateY(-50%);
+  animation: floatNode5 6s ease-in-out infinite 3.5s;
+}
+
+@keyframes floatNode0 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
+@keyframes floatNode1 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-7px) rotate(-1deg); } }
+@keyframes floatNode2 { 0%, 100% { transform: translateY(-50%) translateX(0px); } 50% { transform: translateY(-50%) translateX(5px); } }
+@keyframes floatNode3 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(6px) rotate(1deg); } }
+@keyframes floatNode4 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(7px) rotate(-1deg); } }
+@keyframes floatNode5 { 0%, 100% { transform: translateY(-50%) translateX(0px); } 50% { transform: translateY(-50%) translateX(-5px); } }
+
+/* Frosted Liquid Glass Skill Pill */
+.orbit-skill-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.72) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 10px 25px -4px rgba(15, 23, 42, 0.1),
+    0 2px 6px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.orbit-skill-pill:hover {
+  border-color: var(--skill-color, #0284c7);
+  box-shadow: 
+    0 14px 30px -4px rgba(15, 23, 42, 0.15),
+    0 0 18px var(--skill-color, rgba(2, 132, 199, 0.4));
+}
+
+.orbit-skill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.orbit-skill-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.orbit-skill-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+/* =========================================================
+   RESPONSIVE LAYOUT
+   ========================================================= */
 @media (max-width: 1100px) {
   .hero-avatar-frame {
     width: 380px;
@@ -206,6 +309,12 @@
     width: 330px;
     height: 330px;
   }
+  .orbit-slot-0 { top: 10px; left: -10px; }
+  .orbit-slot-1 { top: 15px; right: -15px; }
+  .orbit-slot-2 { right: -35px; }
+  .orbit-slot-3 { bottom: 15px; right: -15px; }
+  .orbit-slot-4 { bottom: 15px; left: -15px; }
+  .orbit-slot-5 { left: -35px; }
 }
 
 @media (max-width: 968px) {
@@ -214,7 +323,7 @@
     flex-direction: column-reverse !important;
     text-align: center;
     padding-top: 120px !important;
-    gap: 1.5rem;
+    gap: 1.8rem;
   }
   
   .hero-content {
@@ -244,7 +353,18 @@
     height: 290px;
   }
 
-
+  .orbit-skill-pill {
+    padding: 0.35rem 0.75rem;
+  }
+  .orbit-skill-name {
+    font-size: 0.78rem;
+  }
+  .orbit-slot-0 { top: -5px; left: -5px; }
+  .orbit-slot-1 { top: 5px; right: -10px; }
+  .orbit-slot-2 { right: -25px; }
+  .orbit-slot-3 { bottom: 5px; right: -5px; }
+  .orbit-slot-4 { bottom: 5px; left: -10px; }
+  .orbit-slot-5 { left: -25px; }
 }
 
 @media (max-width: 480px) {
@@ -268,7 +388,26 @@
 
   .hero-avatar-ring,
   .hero-avatar-ambient-glow {
-    width: 250px;
-    height: 250px;
+    width: 240px;
+    height: 240px;
+  }
+
+  .orbit-skill-pill {
+    padding: 0.3rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .orbit-skill-icon {
+    font-size: 0.85rem;
+  }
+
+  .orbit-skill-name {
+    font-size: 0.74rem;
+  }
+
+  /* Hide 2 slots on very narrow phone screens to avoid horizontal crowding */
+  .orbit-slot-2,
+  .orbit-slot-5 {
+    display: none;
   }
 }
