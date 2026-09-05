@@ -1,30 +1,8 @@
-import React, { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
+import React from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles, Code2 } from 'lucide-react';
+import manpreetHero from '../assets/manpreet-hero.png';
 import '../styles/Hero.css';
-
-const AnimatedShape = () => {
-  const meshRef = useRef();
-  
-  useFrame((state) => {
-    meshRef.current.rotation.x = state.clock.getElapsedTime() * 0.2;
-    meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.3;
-  });
-
-  return (
-    <Sphere visible args={[1, 100, 200]} scale={2.5} ref={meshRef}>
-      <MeshDistortMaterial
-        color="#0056b3"
-        attach="material"
-        distort={0.4}
-        speed={2}
-        roughness={0.1}
-        metalness={0.5}
-      />
-    </Sphere>
-  );
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -64,14 +42,48 @@ const Hero = () => {
         </motion.div>
       </div>
       
-      <div className="hero-3d">
-        <Canvas>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[2, 2, 5]} intensity={1} />
-          <AnimatedShape />
-          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={2} />
-        </Canvas>
-      </div>
+      <motion.div 
+        className="hero-visuals"
+        initial={{ opacity: 0, scale: 0.88 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.9, delay: 0.2 }}
+      >
+        <div className="hero-avatar-frame">
+          {/* Ambient soft glow matching background liquid blobs */}
+          <div className="hero-avatar-ambient-glow"></div>
+          
+          {/* Frosted Liquid Glass Bezel Ring */}
+          <div className="hero-avatar-ring">
+            <img 
+              src={manpreetHero} 
+              alt="Manpreet Singh" 
+              className="hero-avatar-img"
+              loading="eager"
+            />
+          </div>
+
+          {/* Floating Glass Pill Badges */}
+          <motion.div 
+            className="hero-floating-badge badge-top-right glass-panel"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <Sparkles size={16} className="badge-icon-sparkle" />
+            <span>Chitkara • <strong>9.26 CGPA</strong></span>
+          </motion.div>
+
+          <motion.div 
+            className="hero-floating-badge badge-bottom-left glass-panel"
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+          >
+            <Code2 size={16} className="badge-icon-code" />
+            <span>Full-Stack & AI Engineer</span>
+          </motion.div>
+        </div>
+      </motion.div>
     </section>
   );
 };
