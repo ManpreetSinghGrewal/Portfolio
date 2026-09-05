@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { masterResume: defaultMasterResume, generateLatexCode } = require('../data/masterResume');
+const { 
+  masterResume: initialGivenResume, 
+  allPortfolioProjects, 
+  generateLatexCode 
+} = require('../data/masterResume');
 
-let activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
+let activeMasterResume = JSON.parse(JSON.stringify(initialGivenResume));
 
 const TECH_KEYWORDS = [
   'react', 'react.js', 'node', 'node.js', 'typescript', 'javascript', 'express', 'express.js',
@@ -10,7 +14,8 @@ const TECH_KEYWORDS = [
   'rest', 'restful', 'api', 'apis', 'graphql', 'next.js', 'tailwind', 'tailwind css',
   'html', 'html5', 'css', 'css3', 'git', 'github', 'docker', 'aws', 'linux', 'c++', 'java',
   'python', 'data structures', 'algorithms', 'dsa', 'system design', 'jwt', 'oauth',
-  'gemini', 'ai', 'machine learning', 'frontend', 'backend', 'full-stack', 'fullstack'
+  'gemini', 'ai', 'machine learning', 'frontend', 'backend', 'full-stack', 'fullstack',
+  'video', 'streaming', 'audio', 'dashboard', 'shadcn', 'responsive'
 ];
 
 function extractKeywords(jdText) {
@@ -42,8 +47,9 @@ function computeAtsScore(jdKeywords) {
 
   const profileKeywords = [
     'react', 'react.js', 'node', 'node.js', 'express', 'express.js', 'mongodb', 'javascript',
-    'c++', 'java', 'html', 'css', 'git', 'github', 'socket.io', 'gemini', 'tailwind', 'tailwind css',
-    'webrtc', 'jwt', 'rest', 'api', 'dsa', 'algorithms', 'linux', 'python'
+    'typescript', 'c++', 'java', 'html', 'css', 'git', 'github', 'socket.io', 'gemini', 'tailwind',
+    'tailwind css', 'webrtc', 'jwt', 'rest', 'api', 'dsa', 'algorithms', 'linux', 'python',
+    'video', 'streaming', 'dashboard'
   ];
 
   const matched = [];
@@ -64,33 +70,71 @@ function computeAtsScore(jdKeywords) {
   return { score, matched, missing };
 }
 
+/**
+ * Intelligent ATS Tailoring:
+ * - Dynamically adapts Career Objective to the target role and key skills
+ * - Selects the top 2 best-matching projects from Quiz Arena, SiteFlow AI, and HostelAdda
+ * - Augments and reorders technical skills to highlight matching competencies
+ */
 function tailorRuleBased(jdText, targetRole, masterData) {
   const jdKeywords = extractKeywords(jdText);
   const { score, matched, missing } = computeAtsScore(jdKeywords);
 
-  const roleTitle = targetRole || (jdKeywords.includes('frontend') ? 'Frontend Developer' :
-                                   jdKeywords.includes('backend') ? 'Backend Developer' :
-                                   'Full-Stack Developer');
+  const roleTitle = targetRole || (
+    jdKeywords.includes('frontend') ? 'Frontend Developer' :
+    jdKeywords.includes('backend') ? 'Backend Developer' :
+    jdKeywords.includes('webrtc') || jdKeywords.includes('video') ? 'Full-Stack WebRTC Engineer' :
+    'Full-Stack Developer'
+  );
 
   const topSkills = matched.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
   const tailoredObjective = `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${roleTitle.toLowerCase()} with focus on ${topSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`;
 
-  // Select top 2 projects best matching the JD
-  const candidateProjects = [...masterData.projects];
-  candidateProjects.sort((a, b) => {
-    const aLower = (a.title + ' ' + a.techStack + ' ' + a.bullets.join(' ')).toLowerCase();
-    const bLower = (b.title + ' ' + b.techStack + ' ' + b.bullets.join(' ')).toLowerCase();
+  // Score all 3 portfolio projects against the JD
+  const scoredProjects = allPortfolioProjects.map(proj => {
+    const textToCheck = (proj.title + ' ' + proj.techStack + ' ' + (proj.tags || []).join(' ') + ' ' + proj.bullets.join(' ')).toLowerCase();
+    let matchCount = 0;
+    jdKeywords.forEach(kw => {
+      if (textToCheck.includes(kw)) matchCount += 2;
+    });
 
-    const aMatches = jdKeywords.filter(k => aLower.includes(k)).length;
-    const bMatches = jdKeywords.filter(k => bLower.includes(k)).length;
-    return bMatches - aMatches;
+    // Specific tech triggers
+    if ((kw => jdKeywords.includes('webrtc') || jdKeywords.includes('video') || jdKeywords.includes('streaming'))() && proj.id === 'hosteladda') {
+      matchCount += 8;
+    }
+    if ((kw => jdKeywords.includes('tailwind') || jdKeywords.includes('typescript') || jdKeywords.includes('ai'))() && proj.id === 'siteflow-ai') {
+      matchCount += 5;
+    }
+    if ((kw => jdKeywords.includes('socket.io') || jdKeywords.includes('auth') || jdKeywords.includes('jwt'))() && proj.id === 'quiz-arena') {
+      matchCount += 5;
+    }
+
+    return { ...proj, matchCount };
   });
 
-  const selectedProjects = candidateProjects.slice(0, 2);
+  scoredProjects.sort((a, b) => b.matchCount - a.matchCount);
+  const selectedProjects = scoredProjects.slice(0, 2).map(({ matchCount, tags, ...p }) => p);
+
+  // Tailor Technical Skills: reorder and include matching technologies
+  const tailoredSkills = { ...masterData.technicalSkills };
+
+  if (jdKeywords.includes('typescript') && !tailoredSkills['Web Development'].includes('TypeScript')) {
+    tailoredSkills['Web Development'] += ', TypeScript';
+  }
+  if (jdKeywords.includes('tailwind') && !tailoredSkills['Web Development'].includes('Tailwind CSS')) {
+    tailoredSkills['Web Development'] += ', Tailwind CSS';
+  }
+  if (jdKeywords.includes('webrtc') && !tailoredSkills['Developer Tools'].includes('WebRTC')) {
+    tailoredSkills['Developer Tools'] += ', WebRTC';
+  }
+  if (jdKeywords.includes('python') && !tailoredSkills['Programming Languages'].includes('Python')) {
+    tailoredSkills['Programming Languages'] = 'Python, ' + tailoredSkills['Programming Languages'];
+  }
 
   const tailoredResume = {
     ...masterData,
     careerObjective: tailoredObjective,
+    technicalSkills: tailoredSkills,
     projects: selectedProjects
   };
 
@@ -124,26 +168,31 @@ You are an expert Technical Recruiter and ATS Optimization Specialist.
 You have been provided with:
 1. Target Job Description (JD)
 2. Target Role (optional)
-3. Master Candidate Profile for "Manpreet Singh", formatted according to his exact LaTeX academic sample resume.
+3. Master Candidate Profile for "Manpreet Singh", with his 3 major portfolio projects: Quiz Arena, SiteFlow AI, and HostelAdda.
 
 TASK:
-Tailor the candidate's resume for this specific Job Description. Strictly preserve all authentic facts:
+Tailor the candidate's resume for this specific Job Description.
+Strictly preserve genuine credentials:
 - Chitkara University B.E. CSE (2024--2028), Class XII (2024), Class X (2022) at The Cambridge School
 - Algoryx Technologies Frontend Developer Intern (June 2026 -- July 2026)
 - 300+ LeetCode problems solved, Sandbox 2.0 Hackathon Finalist, University Hackathon
 - Python Foundation Certification, Cybersecurity for Everyone, Red Hat System Administration I & II
 
-Tailor ONLY:
-1. "careerObjective": 2-3 concise sentences tailored specifically to the target role and key technical requirements of this JD, in the exact voice of the sample.
-2. "technicalSkills": Order and prioritize skills matching the JD.
-3. "projects": Select the 2 most relevant projects among Quiz Arena, SiteFlow AI, and HostelAdda, keeping LaTeX bolding \\textbf{...} on keywords.
+TAILOR THE FOLLOWING:
+1. "careerObjective": 2-3 concise sentences tailored to the target role and key technical requirements of this JD, in the exact voice of the sample.
+2. "projects": SELECT THE 2 MOST RELEVANT PROJECTS among:
+   - Quiz Arena (React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI)
+   - SiteFlow AI (React.js, JavaScript, Tailwind CSS, Express.js, MongoDB - GitHub: https://github.com/ManpreetSinghGrewal/SiteFlow-AI)
+   - HostelAdda (React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API - GitHub: https://github.com/ManpreetSinghGrewal/HostelAdda)
+   Highlight and keep \\textbf{...} bolding on keywords matching the JD.
+3. "technicalSkills": Order and emphasize skills matching the JD.
 
-Output ONLY valid, parseable JSON with NO markdown wrapping, NO backticks:
+Output ONLY valid, parseable JSON with NO markdown formatting, NO backticks:
 {
   "tailoredResume": {
     "personalInfo": ${JSON.stringify(masterData.personalInfo)},
     "careerObjective": "...",
-    "technicalSkills": ${JSON.stringify(masterData.technicalSkills)},
+    "technicalSkills": { ... },
     "education": ${JSON.stringify(masterData.education)},
     "experience": ${JSON.stringify(masterData.experience)},
     "projects": [ ...two most relevant projects with \\textbf{...} in bullets... ],
@@ -161,8 +210,8 @@ ${jdText}
 TARGET ROLE:
 ${targetRole || 'Full-Stack Developer'}
 
-MASTER CANDIDATE DATA:
-${JSON.stringify(masterData, null, 2)}
+ALL AVAILABLE PROJECTS:
+${JSON.stringify(allPortfolioProjects, null, 2)}
 `;
 
   try {
@@ -183,9 +232,10 @@ ${JSON.stringify(masterData, null, 2)}
 }
 
 // @route   GET /api/resume/master
+// Returns the exact initial given resume
 router.get('/master', (req, res) => {
-  const latexSource = generateLatexCode(activeMasterResume);
-  res.json({ success: true, masterResume: activeMasterResume, latexSource });
+  const latexSource = generateLatexCode(initialGivenResume);
+  res.json({ success: true, masterResume: initialGivenResume, latexSource });
 });
 
 // @route   POST /api/resume/tailor
@@ -197,7 +247,7 @@ router.post('/tailor', async (req, res) => {
       return res.status(400).json({ error: 'Please provide a job description to tailor your resume.' });
     }
 
-    const masterData = customMaster || activeMasterResume;
+    const masterData = customMaster || initialGivenResume;
     const effectiveApiKey = apiKey || process.env.GEMINI_API_KEY;
 
     let result;
@@ -216,9 +266,9 @@ router.post('/tailor', async (req, res) => {
 
 // @route   POST /api/resume/reset-master
 router.post('/reset-master', (req, res) => {
-  activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
-  const latexSource = generateLatexCode(activeMasterResume);
-  res.json({ success: true, message: 'Master resume reset to default', masterResume: activeMasterResume, latexSource });
+  activeMasterResume = JSON.parse(JSON.stringify(initialGivenResume));
+  const latexSource = generateLatexCode(initialGivenResume);
+  res.json({ success: true, message: 'Reset to initial given resume', masterResume: initialGivenResume, latexSource });
 });
 
 module.exports = router;

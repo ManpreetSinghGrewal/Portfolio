@@ -470,22 +470,106 @@ const ResumeStudio = () => {
     }
   };
 
+  const allAvailableProjects = [
+    {
+      id: "quiz-arena",
+      title: "Quiz Arena",
+      techStack: "React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI",
+      githubUrl: "",
+      tags: ["node", "express", "mongodb", "socket.io", "gemini", "ai", "real-time", "auth", "jwt", "api", "backend", "full-stack"],
+      bullets: [
+        "Architected and developed a real-time **multiplayer quiz platform** supporting live matchmaking and interactive battles through Socket.io.",
+        "Integrated **Google Gemini AI** with OpenTDB fallback to dynamically generate challenging, topic-specific Computer Science quizzes.",
+        "Developed an analytics dashboard to track user performance while storing quiz histories, answers and solutions in **MongoDB**.",
+        "Implemented secure **email OTP authentication, JWT authorization and bcrypt password hashing** to protect user accounts."
+      ]
+    },
+    {
+      id: "siteflow-ai",
+      title: "SiteFlow AI",
+      techStack: "React.js, JavaScript, Tailwind CSS, Express.js, MongoDB",
+      githubUrl: "https://github.com/ManpreetSinghGrewal/SiteFlow-AI",
+      tags: ["react", "javascript", "typescript", "tailwind", "express", "mongodb", "ai", "generative ai", "frontend", "ui", "full-stack"],
+      bullets: [
+        "Developed an AI-powered platform that generates websites from business descriptions and supports the workflow from user input to website preview.",
+        "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using **React.js**.",
+        "Created reusable UI components with **Tailwind CSS** and integrated **Express.js and MongoDB** for project storage and backend workflows."
+      ]
+    },
+    {
+      id: "hosteladda",
+      title: "HostelAdda",
+      techStack: "React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API",
+      githubUrl: "https://github.com/ManpreetSinghGrewal/HostelAdda",
+      tags: ["webrtc", "video", "audio", "streaming", "socket.io", "real-time", "node", "mongodb", "oauth", "auth", "chat"],
+      bullets: [
+        "Architected an exclusive real-time **video matchmaking and campus lounge platform** featuring 1-on-1 random peer matching and hostel rooms.",
+        "Implemented low-latency audio/video streaming using **WebRTC** and bi-directional **Socket.io** signaling servers.",
+        "Integrated **Brevo API** for 6-digit email OTP verification alongside **Google OAuth 2.0 SSO** for verified student onboarding.",
+        "Engineered **MongoDB** schemas for active session state management, chat persistence, and automated room lifecycle."
+      ]
+    }
+  ];
+
   const runLocalTailor = () => {
     const lower = jobDescription.toLowerCase();
-    const keywords = ['react', 'react.js', 'node', 'node.js', 'webrtc', 'socket.io', 'mongodb', 'express', 'tailwind', 'gemini', 'dsa'];
+    const keywords = ['react', 'react.js', 'node', 'node.js', 'webrtc', 'socket.io', 'mongodb', 'express', 'tailwind', 'gemini', 'dsa', 'typescript', 'video', 'streaming', 'frontend', 'backend'];
     const matched = keywords.filter(k => lower.includes(k));
     const missing = keywords.filter(k => !lower.includes(k));
 
-    const role = targetRole || (lower.includes('frontend') ? 'frontend developer' : 'full-stack developer');
+    const role = targetRole || (
+      lower.includes('frontend') ? 'Frontend Developer' :
+      lower.includes('backend') ? 'Backend Developer' :
+      lower.includes('webrtc') || lower.includes('video') ? 'Full-Stack WebRTC Engineer' :
+      'Full-Stack Developer'
+    );
     const matchedSkills = matched.slice(0, 3).map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ');
+
+    // Score and pick the best 2 projects for this JD
+    const scoredProjects = allAvailableProjects.map(proj => {
+      let matchCount = 0;
+      proj.tags.forEach(t => {
+        if (lower.includes(t)) matchCount += 2;
+      });
+      if ((lower.includes('webrtc') || lower.includes('video')) && proj.id === 'hosteladda') {
+        matchCount += 8;
+      }
+      if ((lower.includes('tailwind') || lower.includes('typescript') || lower.includes('ai')) && proj.id === 'siteflow-ai') {
+        matchCount += 5;
+      }
+      if ((lower.includes('socket.io') || lower.includes('auth') || lower.includes('jwt')) && proj.id === 'quiz-arena') {
+        matchCount += 5;
+      }
+      return { ...proj, matchCount };
+    });
+
+    scoredProjects.sort((a, b) => b.matchCount - a.matchCount);
+    const selectedProjects = scoredProjects.slice(0, 2).map(({ matchCount, tags, ...p }) => p);
+
+    // Tailor Skills
+    const tailoredSkills = { ...defaultResumeData.technicalSkills };
+    if (lower.includes('typescript') && !tailoredSkills['Web Development'].includes('TypeScript')) {
+      tailoredSkills['Web Development'] += ', TypeScript';
+    }
+    if (lower.includes('tailwind') && !tailoredSkills['Web Development'].includes('Tailwind CSS')) {
+      tailoredSkills['Web Development'] += ', Tailwind CSS';
+    }
+    if (lower.includes('webrtc') && !tailoredSkills['Developer Tools'].includes('WebRTC')) {
+      tailoredSkills['Developer Tools'] += ', WebRTC';
+    }
+    if (lower.includes('python') && !tailoredSkills['Programming Languages'].includes('Python')) {
+      tailoredSkills['Programming Languages'] = 'Python, ' + tailoredSkills['Programming Languages'];
+    }
 
     setResumeData(prev => ({
       ...prev,
-      careerObjective: `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${role} with focus on ${matchedSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`
+      careerObjective: `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${role.toLowerCase()} with focus on ${matchedSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`,
+      technicalSkills: tailoredSkills,
+      projects: selectedProjects
     }));
 
     setMatchData({
-      score: Math.min(98, 76 + matched.length * 4),
+      score: Math.min(98, 76 + matched.length * 3),
       matched,
       missing: missing.slice(0, 4),
       mode: 'ats-engine'
@@ -694,7 +778,9 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
           <div className="preview-toolbar">
             <div className="preview-title">
               <FileText size={18} color="#0284c7" />
-              <span>Official LaTeX Academic Resume (1-Page)</span>
+              <span>
+                {matchData ? `Tailored Resume: ${targetRole || 'Target Role'} (${matchData.score}% Match)` : 'Official LaTeX Resume (Initial Given)'}
+              </span>
             </div>
 
             <div className="toolbar-actions">

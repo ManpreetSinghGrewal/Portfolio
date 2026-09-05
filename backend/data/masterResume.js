@@ -1,7 +1,7 @@
 // Master Resume Data & LaTeX Generator for Manpreet Singh
-// Based strictly on Manpreet's official LaTeX resume template.
+// Initial state matches Manpreet's given LaTeX resume verbatim.
 
-const masterResume = {
+const initialGivenResume = {
   personalInfo: {
     name: "Manpreet Singh",
     phone: "+91 7888344778",
@@ -48,6 +48,7 @@ const masterResume = {
       ]
     }
   ],
+  // Initially the exact 2 projects from the user's given resume:
   projects: [
     {
       id: "quiz-arena",
@@ -71,18 +72,6 @@ const masterResume = {
         "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using \\textbf{React.js}.",
         "Created reusable UI components with \\textbf{Tailwind CSS} and integrated \\textbf{Express.js and MongoDB} for project storage and backend workflows."
       ]
-    },
-    {
-      id: "hosteladda",
-      title: "HostelAdda",
-      techStack: "React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API",
-      githubUrl: "https://github.com/ManpreetSinghGrewal/HostelAdda",
-      bullets: [
-        "Architected an exclusive real-time \\textbf{video matchmaking and campus lounge platform} featuring 1-on-1 random peer matching and hostel rooms.",
-        "Implemented low-latency audio/video streaming using \\textbf{WebRTC} and bi-directional \\textbf{Socket.io} signaling servers.",
-        "Integrated \\textbf{Brevo API} for 6-digit email OTP verification alongside \\textbf{Google OAuth 2.0 SSO} for verified student onboarding.",
-        "Engineered \\textbf{MongoDB} schemas for active session state management, chat persistence, and automated room lifecycle."
-      ]
     }
   ],
   achievements: [
@@ -97,48 +86,107 @@ const masterResume = {
   ]
 };
 
+// All available portfolio projects to dynamically swap in based on JD
+const allPortfolioProjects = [
+  {
+    id: "quiz-arena",
+    title: "Quiz Arena",
+    techStack: "React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI",
+    githubUrl: "",
+    tags: ["node", "express", "mongodb", "socket.io", "gemini", "ai", "real-time", "auth", "jwt", "api", "backend", "full-stack"],
+    bullets: [
+      "Architected and developed a real-time \\textbf{multiplayer quiz platform} supporting live matchmaking and interactive battles through Socket.io.",
+      "Integrated \\textbf{Google Gemini AI} with OpenTDB fallback to dynamically generate challenging, topic-specific Computer Science quizzes.",
+      "Developed an analytics dashboard to track user performance while storing quiz histories, answers and solutions in \\textbf{MongoDB}.",
+      "Implemented secure \\textbf{email OTP authentication, JWT authorization and bcrypt password hashing} to protect user accounts."
+    ]
+  },
+  {
+    id: "siteflow-ai",
+    title: "SiteFlow AI",
+    techStack: "React.js, JavaScript, Tailwind CSS, Express.js, MongoDB",
+    githubUrl: "https://github.com/ManpreetSinghGrewal/SiteFlow-AI",
+    tags: ["react", "javascript", "typescript", "tailwind", "express", "mongodb", "ai", "generative ai", "frontend", "ui", "full-stack"],
+    bullets: [
+      "Developed an AI-powered platform that generates websites from business descriptions and supports the workflow from user input to website preview.",
+      "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using \\textbf{React.js}.",
+      "Created reusable UI components with \\textbf{Tailwind CSS} and integrated \\textbf{Express.js and MongoDB} for project storage and backend workflows."
+    ]
+  },
+  {
+    id: "hosteladda",
+    title: "HostelAdda",
+    techStack: "React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API",
+    githubUrl: "https://github.com/ManpreetSinghGrewal/HostelAdda",
+    tags: ["webrtc", "video", "audio", "streaming", "socket.io", "real-time", "node", "mongodb", "oauth", "auth", "chat"],
+    bullets: [
+      "Architected an exclusive real-time \\textbf{video matchmaking and campus lounge platform} featuring 1-on-1 random peer matching and hostel rooms.",
+      "Implemented low-latency audio/video streaming using \\textbf{WebRTC} and bi-directional \\textbf{Socket.io} signaling servers.",
+      "Integrated \\textbf{Brevo API} for 6-digit email OTP verification alongside \\textbf{Google OAuth 2.0 SSO} for verified student onboarding.",
+      "Engineered \\textbf{MongoDB} schemas for active session state management, chat persistence, and automated room lifecycle."
+    ]
+  }
+];
+
 /**
  * Generate exact LaTeX source code from the resume data matching user's template
  */
 function generateLatexCode(data) {
-  const d = data || masterResume;
+  const d = data || initialGivenResume;
 
-  // Format skills section
   const skillsLatex = Object.entries(d.technicalSkills)
     .map(([category, val]) => `\\textbf{${category}:}\n${val}\n\\\\[4pt]`)
     .join('\n\n');
 
-  // Format education table rows
   const educationRows = d.education
     .map((edu, idx) => {
       const spacing = idx < d.education.length - 1 ? '\\\\[5pt]' : '';
-      return `${edu.study} &\n${edu.year} &\n${edu.school}\n${spacing}`.trim();
+      return `${edu.study} &\n${edu.year.replace(/–/g, '--')} &\n${edu.school}\n${spacing}`.trim();
     })
     .join('\n\n');
 
-  // Format experience
   const experienceLatex = d.experience
-    .map(exp => `\\resumeSubheading\n{${exp.company}}{${exp.period}}\n{${exp.role}}{${exp.location}}\n\n\\resumeItemListStart\n${exp.bullets.map(b => `\\resumeItem{\n${b}\n}`).join('\n')}\n\\resumeItemListEnd`)
+    .map(exp => {
+      const bullets = exp.bullets.map(b => {
+        const clean = b.replace(/–/g, '--');
+        return `\\resumeItem{\n${clean}\n}`;
+      }).join('\n');
+      return `\\resumeSubheading\n{${exp.company}}{${exp.period.replace(/–/g, '--')}}\n{${exp.role}}{${exp.location}}\n\n\\resumeItemListStart\n${bullets}\n\\resumeItemListEnd`;
+    })
     .join('\n\n');
 
-  // Format projects
   const projectsLatex = d.projects
     .map(p => {
       const gitLink = p.githubUrl
         ? `{\\href{${p.githubUrl}}{\\underline{GitHub}}}`
         : `{}`;
-      return `\\resumeProjectHeading\n{\\textbf{${p.title}} $|$\n\\emph{${p.techStack}}}\n${gitLink}\n\n\\resumeItemListStart\n${p.bullets.map(b => `\\resumeItem{\n${b}\n}`).join('\n')}\n\\resumeItemListEnd`;
+      const bullets = p.bullets.map(b => {
+        const clean = b.replace(/–/g, '--');
+        return `\\resumeItem{\n${clean}\n}`;
+      }).join('\n');
+      return `\\resumeProjectHeading\n{\\textbf{${p.title}} $|$\n\\emph{${p.techStack}}}\n${gitLink}\n\n\\resumeItemListStart\n${bullets}\n\\resumeItemListEnd`;
     })
     .join('\n\n');
 
-  // Format achievements
   const achievementsLatex = d.achievements
-    .map(a => `\\resumeItem{\n${a}\n}`)
+    .map(a => {
+      if (typeof a === 'string') {
+        const clean = a.replace(/–/g, '--');
+        return `\\resumeItem{\n${clean}\n}`;
+      }
+      const prefix = a.text.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/–/g, '--');
+      const link = a.linkUrl ? `\\href{${a.linkUrl}}{\\underline{${a.linkText}}}.` : '';
+      return `\\resumeItem{\n${prefix}${link}\n}`;
+    })
     .join('\n');
 
-  // Format certifications
   const certificationsLatex = d.certifications
-    .map(c => `\\resumeItem{\n${c}\n}`)
+    .map(c => {
+      const clean = typeof c === 'string'
+        ? c.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/&/g, '\\&').replace(/–/g, '--')
+        : c;
+      return `\\resumeItem{\n${clean}\n}`;
+    })
     .join('\n');
 
   return `%-------------------------
@@ -358,6 +406,7 @@ ${certificationsLatex}
 }
 
 module.exports = {
-  masterResume,
+  masterResume: initialGivenResume,
+  allPortfolioProjects,
   generateLatexCode
 };
