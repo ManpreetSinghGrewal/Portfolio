@@ -125,6 +125,20 @@ const allPortfolioProjects = [
       "Integrated \\textbf{Brevo API} for 6-digit email OTP verification alongside \\textbf{Google OAuth 2.0 SSO} for verified student onboarding.",
       "Engineered \\textbf{MongoDB} schemas for active session state management, chat persistence, and automated room lifecycle."
     ]
+  },
+  {
+    id: "smartvfm",
+    title: "SmartVFM 2.0",
+    techStack: "Python, Pandas, Streamlit, Plotly, Kaggle API",
+    githubUrl: "https://smartvfm-global-smartphone-specification.onrender.com/",
+    liveUrl: "https://smartvfm-global-smartphone-specification.onrender.com/",
+    tags: ["python", "pandas", "data", "analytics", "visualization", "streamlit", "plotly", "kaggle", "api", "machine learning", "scoring", "dashboard", "hardware"],
+    bullets: [
+      "Engineered an end-to-end \\textbf{smartphone data analytics platform} analyzing 400+ devices with dynamic Value-for-Money (VFM) scoring and market price curve evaluation.",
+      "Developed data pipelines using \\textbf{Python \\& Pandas} for min-max hardware normalization, dataset deduplication, and real-time dual-currency (\\₹ INR \\& \\$ USD) conversion.",
+      "Built interactive \\textbf{Plotly radar comparison charts} and customizable user personas (Gamer, Creator, Battery Warrior) inside a high-performance \\textbf{Streamlit} dashboard.",
+      "Integrated \\textbf{Kaggle API} for live multi-dataset federation, automated ingestion, and spec indexing across global and Indian smartphone releases."
+    ]
   }
 ];
 

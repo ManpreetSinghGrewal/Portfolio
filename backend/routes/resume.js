@@ -5,6 +5,7 @@ const {
   allPortfolioProjects, 
   generateLatexCode 
 } = require('../data/masterResume');
+const templates = require('../data/templates');
 
 let activeMasterResume = JSON.parse(JSON.stringify(initialGivenResume));
 
@@ -13,9 +14,10 @@ const TECH_KEYWORDS = [
   'mongodb', 'mongoose', 'sql', 'postgresql', 'mysql', 'redis', 'webrtc', 'socket.io',
   'rest', 'restful', 'api', 'apis', 'graphql', 'next.js', 'tailwind', 'tailwind css',
   'html', 'html5', 'css', 'css3', 'git', 'github', 'docker', 'aws', 'linux', 'c++', 'java',
-  'python', 'data structures', 'algorithms', 'dsa', 'system design', 'jwt', 'oauth',
+  'python', 'pandas', 'streamlit', 'plotly', 'kaggle', 'analytics', 'visualization', 'data science',
+  'data structures', 'algorithms', 'dsa', 'system design', 'jwt', 'oauth',
   'gemini', 'ai', 'machine learning', 'frontend', 'backend', 'full-stack', 'fullstack',
-  'video', 'streaming', 'audio', 'dashboard', 'shadcn', 'responsive'
+  'video', 'streaming', 'audio', 'dashboard', 'shadcn', 'responsive', 'smartphone', 'mobile'
 ];
 
 function extractKeywords(jdText) {
@@ -49,6 +51,7 @@ function computeAtsScore(jdKeywords) {
     'react', 'react.js', 'node', 'node.js', 'express', 'express.js', 'mongodb', 'javascript',
     'typescript', 'c++', 'java', 'html', 'css', 'git', 'github', 'socket.io', 'gemini', 'tailwind',
     'tailwind css', 'webrtc', 'jwt', 'rest', 'api', 'dsa', 'algorithms', 'linux', 'python',
+    'pandas', 'streamlit', 'plotly', 'kaggle', 'analytics', 'visualization',
     'video', 'streaming', 'dashboard'
   ];
 
@@ -73,14 +76,15 @@ function computeAtsScore(jdKeywords) {
 /**
  * Intelligent ATS Tailoring:
  * - Dynamically adapts Career Objective to the target role and key skills
- * - Selects the top 2 best-matching projects from Quiz Arena, SiteFlow AI, and HostelAdda
+ * - Selects the top 2 best-matching projects from Quiz Arena, SiteFlow AI, HostelAdda, and SmartVFM 2.0
  * - Augments and reorders technical skills to highlight matching competencies
  */
-function tailorRuleBased(jdText, targetRole, masterData) {
+function tailorRuleBased(jdText, targetRole, masterData, templateId = 'classic') {
   const jdKeywords = extractKeywords(jdText);
   const { score, matched, missing } = computeAtsScore(jdKeywords);
 
   const roleTitle = targetRole || (
+    jdKeywords.includes('python') || jdKeywords.includes('pandas') || jdKeywords.includes('analytics') ? 'Data Analyst / Python Developer' :
     jdKeywords.includes('frontend') ? 'Frontend Developer' :
     jdKeywords.includes('backend') ? 'Backend Developer' :
     jdKeywords.includes('webrtc') || jdKeywords.includes('video') ? 'Full-Stack WebRTC Engineer' :
@@ -90,7 +94,7 @@ function tailorRuleBased(jdText, targetRole, masterData) {
   const topSkills = matched.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
   const tailoredObjective = `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${roleTitle.toLowerCase()} with focus on ${topSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`;
 
-  // Score all 3 portfolio projects against the JD
+  // Score all 4 portfolio projects against the JD
   const scoredProjects = allPortfolioProjects.map(proj => {
     const textToCheck = (proj.title + ' ' + proj.techStack + ' ' + (proj.tags || []).join(' ') + ' ' + proj.bullets.join(' ')).toLowerCase();
     let matchCount = 0;
@@ -99,13 +103,16 @@ function tailorRuleBased(jdText, targetRole, masterData) {
     });
 
     // Specific tech triggers
-    if ((kw => jdKeywords.includes('webrtc') || jdKeywords.includes('video') || jdKeywords.includes('streaming'))() && proj.id === 'hosteladda') {
+    if ((jdKeywords.includes('python') || jdKeywords.includes('pandas') || jdKeywords.includes('analytics') || jdKeywords.includes('data') || jdKeywords.includes('visualization') || jdKeywords.includes('streamlit') || jdKeywords.includes('kaggle') || jdKeywords.includes('smartphone')) && proj.id === 'smartvfm') {
       matchCount += 8;
     }
-    if ((kw => jdKeywords.includes('tailwind') || jdKeywords.includes('typescript') || jdKeywords.includes('ai'))() && proj.id === 'siteflow-ai') {
+    if ((jdKeywords.includes('webrtc') || jdKeywords.includes('video') || jdKeywords.includes('streaming') || jdKeywords.includes('audio')) && proj.id === 'hosteladda') {
+      matchCount += 8;
+    }
+    if ((jdKeywords.includes('tailwind') || jdKeywords.includes('typescript') || jdKeywords.includes('ai') || jdKeywords.includes('frontend')) && proj.id === 'siteflow-ai') {
       matchCount += 5;
     }
-    if ((kw => jdKeywords.includes('socket.io') || jdKeywords.includes('auth') || jdKeywords.includes('jwt'))() && proj.id === 'quiz-arena') {
+    if ((jdKeywords.includes('socket.io') || jdKeywords.includes('auth') || jdKeywords.includes('jwt') || jdKeywords.includes('backend')) && proj.id === 'quiz-arena') {
       matchCount += 5;
     }
 
@@ -127,8 +134,11 @@ function tailorRuleBased(jdText, targetRole, masterData) {
   if (jdKeywords.includes('webrtc') && !tailoredSkills['Developer Tools'].includes('WebRTC')) {
     tailoredSkills['Developer Tools'] += ', WebRTC';
   }
-  if (jdKeywords.includes('python') && !tailoredSkills['Programming Languages'].includes('Python')) {
+  if ((jdKeywords.includes('python') || jdKeywords.includes('pandas')) && !tailoredSkills['Programming Languages'].includes('Python')) {
     tailoredSkills['Programming Languages'] = 'Python, ' + tailoredSkills['Programming Languages'];
+  }
+  if (jdKeywords.includes('pandas') && !tailoredSkills['Developer Tools'].includes('Pandas')) {
+    tailoredSkills['Developer Tools'] += ', Pandas, Streamlit';
   }
 
   const tailoredResume = {
@@ -138,11 +148,13 @@ function tailorRuleBased(jdText, targetRole, masterData) {
     projects: selectedProjects
   };
 
-  const latexSource = generateLatexCode(tailoredResume);
+  const activeTemplate = templates[templateId] || templates['classic'];
+  const latexSource = activeTemplate ? activeTemplate.generateLatex(tailoredResume) : generateLatexCode(tailoredResume);
 
   return {
     tailoredResume,
     latexSource,
+    templateId: activeTemplate.id,
     matchScore: score,
     matchedKeywords: matched,
     missingKeywords: missing.slice(0, 6),
@@ -150,14 +162,14 @@ function tailorRuleBased(jdText, targetRole, masterData) {
   };
 }
 
-async function tailorWithGemini(apiKey, jdText, targetRole, masterData) {
+async function tailorWithGemini(apiKey, jdText, targetRole, masterData, templateId = 'classic') {
   let GoogleGenerativeAI;
   try {
     const geminiPkg = require('@google/generative-ai');
     GoogleGenerativeAI = geminiPkg.GoogleGenerativeAI;
   } catch (err) {
     console.warn('Gemini package not available, falling back to rule-based ATS engine.');
-    return tailorRuleBased(jdText, targetRole, masterData);
+    return tailorRuleBased(jdText, targetRole, masterData, templateId);
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -168,7 +180,7 @@ You are an expert Technical Recruiter and ATS Optimization Specialist.
 You have been provided with:
 1. Target Job Description (JD)
 2. Target Role (optional)
-3. Master Candidate Profile for "Manpreet Singh", with his 3 major portfolio projects: Quiz Arena, SiteFlow AI, and HostelAdda.
+3. Master Candidate Profile for "Manpreet Singh", with his 4 major portfolio projects: Quiz Arena, SiteFlow AI, HostelAdda, and SmartVFM 2.0.
 
 TASK:
 Tailor the candidate's resume for this specific Job Description.
@@ -182,8 +194,9 @@ TAILOR THE FOLLOWING:
 1. "careerObjective": 2-3 concise sentences tailored to the target role and key technical requirements of this JD, in the exact voice of the sample.
 2. "projects": SELECT THE 2 MOST RELEVANT PROJECTS among:
    - Quiz Arena (React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI)
-   - SiteFlow AI (React.js, JavaScript, Tailwind CSS, Express.js, MongoDB - GitHub: https://github.com/ManpreetSinghGrewal/SiteFlow-AI)
-   - HostelAdda (React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API - GitHub: https://github.com/ManpreetSinghGrewal/HostelAdda)
+   - SiteFlow AI (React.js, JavaScript, Tailwind CSS, Express.js, MongoDB)
+   - HostelAdda (React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API)
+   - SmartVFM 2.0 (Python, Pandas, Streamlit, Plotly, Kaggle API - Smartphone analytics & Value-for-Money scoring)
    Highlight and keep \\textbf{...} bolding on keywords matching the JD.
 3. "technicalSkills": Order and emphasize skills matching the JD.
 
@@ -219,29 +232,58 @@ ${JSON.stringify(allPortfolioProjects, null, 2)}
     const responseText = result.response.text().trim();
     const cleanJson = responseText.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
     const parsed = JSON.parse(cleanJson);
-    const latexSource = generateLatexCode(parsed.tailoredResume);
+    const activeTemplate = templates[templateId] || templates['classic'];
+    const latexSource = activeTemplate ? activeTemplate.generateLatex(parsed.tailoredResume) : generateLatexCode(parsed.tailoredResume);
     return {
       ...parsed,
       latexSource,
+      templateId: activeTemplate.id,
       mode: 'gemini'
     };
   } catch (err) {
     console.error('Gemini error, using rule-based engine:', err.message);
-    return tailorRuleBased(jdText, targetRole, masterData);
+    return tailorRuleBased(jdText, targetRole, masterData, templateId);
   }
 }
 
+// @route   GET /api/resume/templates
+router.get('/templates', (req, res) => {
+  const list = Object.values(templates).map(t => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    primaryColor: t.primaryColor,
+    layout: t.layout
+  }));
+  res.json({ success: true, templates: list });
+});
+
 // @route   GET /api/resume/master
-// Returns the exact initial given resume
 router.get('/master', (req, res) => {
-  const latexSource = generateLatexCode(initialGivenResume);
-  res.json({ success: true, masterResume: initialGivenResume, latexSource });
+  const templateId = req.query.templateId || 'classic';
+  const activeTemplate = templates[templateId] || templates['classic'];
+  const latexSource = activeTemplate.generateLatex(initialGivenResume);
+  res.json({ 
+    success: true, 
+    masterResume: initialGivenResume, 
+    latexSource,
+    templateId: activeTemplate.id 
+  });
+});
+
+// @route   POST /api/resume/generate-latex
+router.post('/generate-latex', (req, res) => {
+  const { resumeData, templateId = 'classic' } = req.body;
+  const activeTemplate = templates[templateId] || templates['classic'];
+  const data = resumeData || initialGivenResume;
+  const latexSource = activeTemplate.generateLatex(data);
+  res.json({ success: true, latexSource, templateId: activeTemplate.id });
 });
 
 // @route   POST /api/resume/tailor
 router.post('/tailor', async (req, res) => {
   try {
-    const { jobDescription, targetRole, customMaster, apiKey } = req.body;
+    const { jobDescription, targetRole, customMaster, apiKey, templateId = 'classic' } = req.body;
 
     if (!jobDescription || jobDescription.trim().length === 0) {
       return res.status(400).json({ error: 'Please provide a job description to tailor your resume.' });
@@ -252,9 +294,9 @@ router.post('/tailor', async (req, res) => {
 
     let result;
     if (effectiveApiKey) {
-      result = await tailorWithGemini(effectiveApiKey, jobDescription, targetRole, masterData);
+      result = await tailorWithGemini(effectiveApiKey, jobDescription, targetRole, masterData, templateId);
     } else {
-      result = tailorRuleBased(jobDescription, targetRole, masterData);
+      result = tailorRuleBased(jobDescription, targetRole, masterData, templateId);
     }
 
     res.json({ success: true, ...result });
@@ -267,8 +309,16 @@ router.post('/tailor', async (req, res) => {
 // @route   POST /api/resume/reset-master
 router.post('/reset-master', (req, res) => {
   activeMasterResume = JSON.parse(JSON.stringify(initialGivenResume));
-  const latexSource = generateLatexCode(initialGivenResume);
-  res.json({ success: true, message: 'Reset to initial given resume', masterResume: initialGivenResume, latexSource });
+  const templateId = req.body?.templateId || 'classic';
+  const activeTemplate = templates[templateId] || templates['classic'];
+  const latexSource = activeTemplate.generateLatex(initialGivenResume);
+  res.json({ 
+    success: true, 
+    message: 'Reset to initial given resume', 
+    masterResume: initialGivenResume, 
+    latexSource,
+    templateId: activeTemplate.id 
+  });
 });
 
 module.exports = router;
