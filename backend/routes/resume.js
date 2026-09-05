@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-let defaultMasterResume = require('../data/masterResume');
+const { masterResume: defaultMasterResume, generateLatexCode } = require('../data/masterResume');
 
 let activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
 
@@ -58,8 +58,8 @@ function computeAtsScore(jdKeywords) {
   });
 
   const ratio = jdKeywords.length > 0 ? matched.length / jdKeywords.length : 0.85;
-  const rawScore = Math.round(70 + (ratio * 28));
-  const score = Math.min(98, Math.max(72, rawScore));
+  const rawScore = Math.round(72 + (ratio * 26));
+  const score = Math.min(98, Math.max(75, rawScore));
 
   return { score, matched, missing };
 }
@@ -72,9 +72,8 @@ function tailorRuleBased(jdText, targetRole, masterData) {
                                    jdKeywords.includes('backend') ? 'Backend Developer' :
                                    'Full-Stack Developer');
 
-  // Tailor Career Objective to match sample resume tone
-  const primarySkills = matched.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
-  const tailoredObjective = `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${roleTitle.toLowerCase()} with focus on ${primarySkills || 'modern web technologies'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`;
+  const topSkills = matched.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)).join(', ');
+  const tailoredObjective = `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${roleTitle.toLowerCase()} with focus on ${topSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`;
 
   // Select top 2 projects best matching the JD
   const candidateProjects = [...masterData.projects];
@@ -89,12 +88,17 @@ function tailorRuleBased(jdText, targetRole, masterData) {
 
   const selectedProjects = candidateProjects.slice(0, 2);
 
+  const tailoredResume = {
+    ...masterData,
+    careerObjective: tailoredObjective,
+    projects: selectedProjects
+  };
+
+  const latexSource = generateLatexCode(tailoredResume);
+
   return {
-    tailoredResume: {
-      ...masterData,
-      careerObjective: tailoredObjective,
-      projects: selectedProjects
-    },
+    tailoredResume,
+    latexSource,
     matchScore: score,
     matchedKeywords: matched,
     missingKeywords: missing.slice(0, 6),
@@ -123,33 +127,30 @@ You have been provided with:
 3. Master Candidate Profile for "Manpreet Singh", formatted according to his exact LaTeX academic sample resume.
 
 TASK:
-Tailor the candidate's resume for this specific Job Description. Strictly keep the exact same section names, education table, contact info, and genuine facts (Chitkara University B.E. CSE 2024–2028, Algoryx Technologies internship, LeetCode 300+, hackathons, certifications).
+Tailor the candidate's resume for this specific Job Description. Strictly preserve all authentic facts:
+- Chitkara University B.E. CSE (2024--2028), Class XII (2024), Class X (2022) at The Cambridge School
+- Algoryx Technologies Frontend Developer Intern (June 2026 -- July 2026)
+- 300+ LeetCode problems solved, Sandbox 2.0 Hackathon Finalist, University Hackathon
+- Python Foundation Certification, Cybersecurity for Everyone, Red Hat System Administration I & II
 
-Only tailor:
+Tailor ONLY:
 1. "careerObjective": 2-3 concise sentences tailored specifically to the target role and key technical requirements of this JD, in the exact voice of the sample.
-2. "technicalSkills": Order and emphasize skills matching the JD.
-3. "projects": Select the 2 most relevant projects among Quiz Arena, SiteFlow AI, and HostelAdda, fine-tuning bolded keywords in bullet points to highlight skills mentioned in the JD.
+2. "technicalSkills": Order and prioritize skills matching the JD.
+3. "projects": Select the 2 most relevant projects among Quiz Arena, SiteFlow AI, and HostelAdda, keeping LaTeX bolding \\textbf{...} on keywords.
 
-Output ONLY valid, parseable JSON with NO markdown formatting, NO backticks:
+Output ONLY valid, parseable JSON with NO markdown wrapping, NO backticks:
 {
   "tailoredResume": {
-    "personalInfo": {
-      "name": "Manpreet Singh",
-      "phone": "+91 7888344778",
-      "email": "manpreetsgrewal5911@gmail.com",
-      "location": "Dehlon, Punjab, India",
-      "linkedin": "https://linkedin.com/in/manpreet-singh",
-      "github": "https://github.com/ManpreetSinghGrewal"
-    },
+    "personalInfo": ${JSON.stringify(masterData.personalInfo)},
     "careerObjective": "...",
-    "education": ${JSON.stringify(masterData.education)},
     "technicalSkills": ${JSON.stringify(masterData.technicalSkills)},
+    "education": ${JSON.stringify(masterData.education)},
     "experience": ${JSON.stringify(masterData.experience)},
-    "projects": [ ...two most relevant projects with bolded keywords in bullets... ],
+    "projects": [ ...two most relevant projects with \\textbf{...} in bullets... ],
     "achievements": ${JSON.stringify(masterData.achievements)},
     "certifications": ${JSON.stringify(masterData.certifications)}
   },
-  "matchScore": 94,
+  "matchScore": 95,
   "matchedKeywords": ["list", "of", "matched", "keywords"],
   "missingKeywords": ["list", "of", "missing", "keywords"]
 }
@@ -169,8 +170,10 @@ ${JSON.stringify(masterData, null, 2)}
     const responseText = result.response.text().trim();
     const cleanJson = responseText.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
     const parsed = JSON.parse(cleanJson);
+    const latexSource = generateLatexCode(parsed.tailoredResume);
     return {
       ...parsed,
+      latexSource,
       mode: 'gemini'
     };
   } catch (err) {
@@ -181,7 +184,8 @@ ${JSON.stringify(masterData, null, 2)}
 
 // @route   GET /api/resume/master
 router.get('/master', (req, res) => {
-  res.json({ success: true, masterResume: activeMasterResume });
+  const latexSource = generateLatexCode(activeMasterResume);
+  res.json({ success: true, masterResume: activeMasterResume, latexSource });
 });
 
 // @route   POST /api/resume/tailor
@@ -213,7 +217,8 @@ router.post('/tailor', async (req, res) => {
 // @route   POST /api/resume/reset-master
 router.post('/reset-master', (req, res) => {
   activeMasterResume = JSON.parse(JSON.stringify(defaultMasterResume));
-  res.json({ success: true, message: 'Master resume reset to default', masterResume: activeMasterResume });
+  const latexSource = generateLatexCode(activeMasterResume);
+  res.json({ success: true, message: 'Master resume reset to default', masterResume: activeMasterResume, latexSource });
 });
 
 module.exports = router;

@@ -7,12 +7,14 @@ import {
   Copy, 
   Check, 
   FileText, 
+  Code,
+  Eye,
   RefreshCw,
   Edit3
 } from 'lucide-react';
 import '../styles/ResumeStudio.css';
 
-// Master baseline data matching Manpreet's official sample resume exactly
+// Master baseline data matching Manpreet's exact LaTeX resume template
 const defaultResumeData = {
   personalInfo: {
     name: "Manpreet Singh",
@@ -23,6 +25,13 @@ const defaultResumeData = {
     github: "https://github.com/ManpreetSinghGrewal"
   },
   careerObjective: "Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a full-stack developer by working on real-world products, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.",
+  technicalSkills: {
+    "Programming Languages": "Java, C++, JavaScript",
+    "Web Development": "HTML, CSS, React.js",
+    "Backend": "Node.js, Express.js",
+    "Database": "MongoDB",
+    "Developer Tools": "Git, GitHub, VS Code, Socket.io"
+  },
   education: [
     {
       study: "B.E. CSE",
@@ -40,13 +49,6 @@ const defaultResumeData = {
       school: "The Cambridge School"
     }
   ],
-  technicalSkills: {
-    "Programming Languages": "Java, C++, JavaScript",
-    "Web Development": "HTML, CSS, React.js",
-    "Backend": "Node.js, Express.js",
-    "Database": "MongoDB",
-    "Developer Tools": "Git, GitHub, VS Code, Socket.io"
-  },
   experience: [
     {
       company: "Algoryx Technologies",
@@ -65,38 +67,317 @@ const defaultResumeData = {
       id: "quiz-arena",
       title: "Quiz Arena",
       techStack: "React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI",
-      githubUrl: "https://github.com/ManpreetSinghGrewal",
-      liveUrl: "https://quiz-arena-lake.vercel.app/",
+      githubUrl: "",
       bullets: [
-        "Architected and developed a real-time **multiplayer quiz platform** supporting live matchmaking and interactive battles through **Socket.io**.",
+        "Architected and developed a real-time **multiplayer quiz platform** supporting live matchmaking and interactive battles through Socket.io.",
         "Integrated **Google Gemini AI** with OpenTDB fallback to dynamically generate challenging, topic-specific Computer Science quizzes.",
-        "Developed an **analytics dashboard** to track user performance while storing quiz histories, answers and solutions in **MongoDB**.",
-        "Implemented secure **email OTP authentication**, **JWT authorization** and **bcrypt password hashing** to protect user accounts."
+        "Developed an analytics dashboard to track user performance while storing quiz histories, answers and solutions in **MongoDB**.",
+        "Implemented secure **email OTP authentication, JWT authorization and bcrypt password hashing** to protect user accounts."
       ]
     },
     {
       id: "siteflow-ai",
       title: "SiteFlow AI",
       techStack: "React.js, JavaScript, Tailwind CSS, Express.js, MongoDB",
-      githubUrl: "https://github.com/ManpreetSinghGrewal",
-      liveUrl: "https://site-flow-ai-eight.vercel.app/",
+      githubUrl: "https://github.com/ManpreetSinghGrewal/SiteFlow-AI",
       bullets: [
-        "Developed an **AI-powered platform** that generates websites from business descriptions and supports the workflow from user input to website preview.",
+        "Developed an AI-powered platform that generates websites from business descriptions and supports the workflow from user input to website preview.",
         "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using **React.js**.",
-        "Created reusable UI components with **Tailwind CSS** and integrated **Express.js** and **MongoDB** for project storage and backend workflows."
+        "Created reusable UI components with **Tailwind CSS** and integrated **Express.js and MongoDB** for project storage and backend workflows."
       ]
     }
   ],
   achievements: [
-    "**300+ LeetCode problems solved** – LeetCode Profile.",
-    "**Sandbox 2.0 Hackathon Finalist** – Project selected for the final round.",
-    "**University Hackathon** – Selected as the only team among 24 participating groups to advance to the next stage."
+    {
+      text: "**300+ LeetCode problems solved** – ",
+      linkText: "LeetCode Profile",
+      linkUrl: "https://leetcode.com/u/ManpreetSG/"
+    },
+    {
+      text: "**Sandbox 2.0 Hackathon Finalist** – Project selected for the final round."
+    },
+    {
+      text: "**University Hackathon** – Selected as the **only team among 24 participating groups** to advance to the next stage."
+    }
   ],
   certifications: [
     "**Python Foundation Certification**",
     "**Cybersecurity for Everyone** – University of Maryland (Coursera)",
     "**Red Hat System Administration I & II** – RH124 & RH134"
   ]
+};
+
+// Generates compilable LaTeX code matching user's exact template
+const generateLatexFileContent = (data) => {
+  const d = data || defaultResumeData;
+
+  const skillsLatex = Object.entries(d.technicalSkills)
+    .map(([category, val]) => `\\textbf{${category}:}\n${val}\n\\\\[4pt]`)
+    .join('\n\n');
+
+  const educationRows = d.education
+    .map((edu, idx) => {
+      const spacing = idx < d.education.length - 1 ? '\\\\[5pt]' : '';
+      return `${edu.study} &\n${edu.year.replace(/–/g, '--')} &\n${edu.school}\n${spacing}`.trim();
+    })
+    .join('\n\n');
+
+  const experienceLatex = d.experience
+    .map(exp => {
+      const bullets = exp.bullets.map(b => {
+        const latexBullet = b.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/–/g, '--');
+        return `\\resumeItem{\n${latexBullet}\n}`;
+      }).join('\n');
+      return `\\resumeSubheading\n{${exp.company}}{${exp.period.replace(/–/g, '--')}}\n{${exp.role}}{${exp.location}}\n\n\\resumeItemListStart\n${bullets}\n\\resumeItemListEnd`;
+    })
+    .join('\n\n');
+
+  const projectsLatex = d.projects
+    .map(p => {
+      const gitLink = p.githubUrl
+        ? `{\\href{${p.githubUrl}}{\\underline{GitHub}}}`
+        : `{}`;
+      const bullets = p.bullets.map(b => {
+        const latexBullet = b.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/–/g, '--');
+        return `\\resumeItem{\n${latexBullet}\n}`;
+      }).join('\n');
+      return `\\resumeProjectHeading\n{\\textbf{${p.title}} $|$\n\\emph{${p.techStack}}}\n${gitLink}\n\n\\resumeItemListStart\n${bullets}\n\\resumeItemListEnd`;
+    })
+    .join('\n\n');
+
+  const achievementsLatex = d.achievements
+    .map(a => {
+      if (typeof a === 'string') {
+        const clean = a.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/–/g, '--');
+        return `\\resumeItem{\n${clean}\n}`;
+      }
+      const prefix = a.text.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/–/g, '--');
+      const link = a.linkUrl ? `\\href{${a.linkUrl}}{\\underline{${a.linkText}}}.` : '';
+      return `\\resumeItem{\n${prefix}${link}\n}`;
+    })
+    .join('\n');
+
+  const certificationsLatex = d.certifications
+    .map(c => {
+      const clean = c.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}').replace(/&/g, '\\&').replace(/–/g, '--');
+      return `\\resumeItem{\n${clean}\n}`;
+    })
+    .join('\n');
+
+  return `%-------------------------
+% Resume in Latex
+% Customized for Manpreet Singh
+%------------------------
+
+\\documentclass[letterpaper,10pt]{article}
+
+\\usepackage{latexsym}
+\\usepackage[empty]{fullpage}
+\\usepackage{titlesec}
+\\usepackage{marvosym}
+\\usepackage[usenames,dvipsnames]{color}
+\\usepackage{verbatim}
+\\usepackage{enumitem}
+\\usepackage[hidelinks]{hyperref}
+\\usepackage{fancyhdr}
+\\usepackage[english]{babel}
+\\usepackage{tabularx}
+\\input{glyphtounicode}
+
+%----------FONT----------
+\\usepackage[T1]{fontenc}
+\\usepackage{lmodern}
+
+%----------PAGE STYLE----------
+\\pagestyle{fancy}
+\\fancyhf{}
+\\fancyfoot{}
+\\renewcommand{\\headrulewidth}{0pt}
+\\renewcommand{\\footrulewidth}{0pt}
+
+%----------MARGINS----------
+\\addtolength{\\oddsidemargin}{-0.55in}
+\\addtolength{\\evensidemargin}{-0.55in}
+\\addtolength{\\textwidth}{1.1in}
+\\addtolength{\\topmargin}{-0.62in}
+\\addtolength{\\textheight}{1.22in}
+
+\\urlstyle{same}
+\\raggedbottom
+\\raggedright
+\\setlength{\\tabcolsep}{0in}
+
+%----------SECTION FORMATTING----------
+\\titleformat{\\section}
+{\\scshape\\raggedright\\large}
+{}{0em}{}
+[\\color{black}\\titlerule]
+
+\\titlespacing{\\section}
+{0pt}{9pt}{5pt}
+
+%----------ATS----------
+\\pdfgentounicode=1
+
+%----------CUSTOM COMMANDS----------
+
+\\newcommand{\\resumeItem}[1]{
+    \\item\\small{#1}
+}
+
+\\newcommand{\\resumeSubheading}[4]{
+    \\vspace{2pt}
+    \\item
+    \\begin{tabular*}{0.97\\textwidth}[t]{
+        l@{\\extracolsep{\\fill}}r
+    }
+        \\textbf{#1} & #2 \\\\
+        \\textit{\\small#3} & \\textit{\\small#4} \\\\
+    \\end{tabular*}
+    \\vspace{-3pt}
+}
+
+\\newcommand{\\resumeProjectHeading}[2]{
+    \\vspace{2pt}
+    \\item
+    \\begin{tabular*}{0.97\\textwidth}{
+        l@{\\extracolsep{\\fill}}r
+    }
+        \\small#1 & #2 \\\\
+    \\end{tabular*}
+    \\vspace{-2pt}
+}
+
+\\newcommand{\\resumeSubHeadingListStart}{
+    \\begin{itemize}[
+        leftmargin=0.15in,
+        label={},
+        itemsep=0pt,
+        topsep=0pt,
+        parsep=0pt
+    ]
+}
+
+\\newcommand{\\resumeSubHeadingListEnd}{
+    \\end{itemize}
+}
+
+\\newcommand{\\resumeItemListStart}{
+    \\begin{itemize}[
+        leftmargin=0.18in,
+        itemsep=2pt,
+        topsep=2pt,
+        parsep=0pt
+    ]
+}
+
+\\newcommand{\\resumeItemListEnd}{
+    \\end{itemize}
+}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%
+%-------------------------------------------
+
+\\begin{document}
+
+%----------HEADING----------
+
+\\begin{center}
+
+    \\textbf{\\Huge \\scshape ${d.personalInfo.name}}\\\\[3pt]
+
+    \\small
+    ${d.personalInfo.phone} $|$
+    \\href{mailto:${d.personalInfo.email}}
+    {\\underline{${d.personalInfo.email}}} $|$
+    ${d.personalInfo.location}
+
+\\end{center}
+
+\\vspace{2pt}
+
+%-----------CAREER OBJECTIVE-----------
+
+\\section{Career Objective}
+
+\\small{
+${d.careerObjective}
+}
+
+%-----------TECHNICAL SKILLS-----------
+
+\\section{Technical Skills}
+
+\\small{
+
+${skillsLatex}
+
+}
+
+%-----------EDUCATION-----------
+
+\\section{Education}
+
+\\renewcommand{\\arraystretch}{1.25}
+
+\\begin{tabularx}{\\textwidth}{
+p{4.2cm} p{1.8cm} X
+}
+
+\\textbf{Study} &
+\\textbf{Year} &
+\\textbf{School / University}
+\\\\[5pt]
+
+${educationRows}
+
+\\end{tabularx}
+
+\\vspace{5pt}
+
+%-----------EXPERIENCE-----------
+
+\\section{Experience}
+
+\\resumeSubHeadingListStart
+
+${experienceLatex}
+
+\\resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+
+\\section{Projects}
+
+\\resumeSubHeadingListStart
+
+${projectsLatex}
+
+\\resumeSubHeadingListEnd
+
+%-----------ACHIEVEMENTS-----------
+
+\\section{Achievements}
+
+\\resumeItemListStart
+
+${achievementsLatex}
+
+\\resumeItemListEnd
+
+%-----------CERTIFICATIONS-----------
+
+\\section{Certifications}
+
+\\resumeItemListStart
+
+${certificationsLatex}
+
+\\resumeItemListEnd
+
+\\end{document}
+`;
 };
 
 const sampleJDs = [
@@ -117,10 +398,15 @@ const sampleJDs = [
   }
 ];
 
-// Helper to render markdown bolding (**text**) seamlessly
+// Helper to render bold text and markdown properly
 const renderFormatted = (text) => {
   if (!text) return null;
-  const parts = text.split(/(\*\*.*?\*\*)/g);
+  // Convert \textbf{...} to **...** if present
+  let clean = text.replace(/\\textbf\{([^}]+)\}/g, '**$1**');
+  clean = clean.replace(/\\emph\{([^}]+)\}/g, '$1');
+  clean = clean.replace(/--/g, '–');
+  
+  const parts = clean.split(/(\*\*.*?\*\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={i}>{part.slice(2, -2)}</strong>;
@@ -134,9 +420,11 @@ const ResumeStudio = () => {
   const [targetRole, setTargetRole] = useState('');
   const [resumeData, setResumeData] = useState(defaultResumeData);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
+  const [copiedLatex, setCopiedLatex] = useState(false);
   const [matchData, setMatchData] = useState(null);
   const [editable, setEditable] = useState(false);
+  const [viewMode, setViewMode] = useState('preview'); // 'preview' or 'latex'
   const resumePrintRef = useRef(null);
 
   const handleLoadSample = (sample) => {
@@ -184,7 +472,7 @@ const ResumeStudio = () => {
 
   const runLocalTailor = () => {
     const lower = jobDescription.toLowerCase();
-    const keywords = ['react', 'react.js', 'node', 'node.js', 'webrtc', 'socket.io', 'mongodb', 'express', 'tailwind', 'gemini'];
+    const keywords = ['react', 'react.js', 'node', 'node.js', 'webrtc', 'socket.io', 'mongodb', 'express', 'tailwind', 'gemini', 'dsa'];
     const matched = keywords.filter(k => lower.includes(k));
     const missing = keywords.filter(k => !lower.includes(k));
 
@@ -193,7 +481,7 @@ const ResumeStudio = () => {
 
     setResumeData(prev => ({
       ...prev,
-      careerObjective: `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${role} with focus on ${matchedSkills || 'modern web technologies'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`
+      careerObjective: `Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a ${role} with focus on ${matchedSkills || 'modern full-stack engineering'}, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.`
     }));
 
     setMatchData({
@@ -208,7 +496,25 @@ const ResumeStudio = () => {
     window.print();
   };
 
-  const handleCopyText = () => {
+  const handleDownloadTex = () => {
+    const content = generateLatexFileContent(resumeData);
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Manpreet_Singh_Resume.tex';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyLatex = () => {
+    const content = generateLatexFileContent(resumeData);
+    navigator.clipboard.writeText(content);
+    setCopiedLatex(true);
+    setTimeout(() => setCopiedLatex(false), 2500);
+  };
+
+  const handleCopyPlainText = () => {
     const text = `
 ${resumeData.personalInfo.name}
 ${resumeData.personalInfo.phone} | ${resumeData.personalInfo.email} | ${resumeData.personalInfo.location}
@@ -216,29 +522,29 @@ ${resumeData.personalInfo.phone} | ${resumeData.personalInfo.email} | ${resumeDa
 CAREER OBJECTIVE
 ${resumeData.careerObjective}
 
+TECHNICAL SKILLS
+${Object.entries(resumeData.technicalSkills).map(([k, v]) => `${k}: ${v}`).join('\n')}
+
 EDUCATION
 Study\tYear\tSchool / University
 ${resumeData.education.map(e => `${e.study}\t${e.year}\t${e.school}`).join('\n')}
 
-TECHNICAL SKILLS
-${Object.entries(resumeData.technicalSkills).map(([k, v]) => `${k}: ${v}`).join('\n')}
-
 EXPERIENCE
-${resumeData.experience.map(exp => `${exp.company}\t${exp.period}\n${exp.role}\t${exp.location}\n${exp.bullets.map(b => `– ${b.replace(/\*\*/g, '')}`).join('\n')}`).join('\n\n')}
+${resumeData.experience.map(exp => `${exp.company}\t${exp.period}\n${exp.role}\t${exp.location}\n${exp.bullets.map(b => `• ${b.replace(/\*\*/g, '').replace(/\\textbf\{([^}]+)\}/g, '$1')}`).join('\n')}`).join('\n\n')}
 
 PROJECTS
-${resumeData.projects.map(p => `${p.title} | ${p.techStack}\n${p.bullets.map(b => `– ${b.replace(/\*\*/g, '')}`).join('\n')}`).join('\n\n')}
+${resumeData.projects.map(p => `${p.title} | ${p.techStack}\n${p.bullets.map(b => `• ${b.replace(/\*\*/g, '').replace(/\\textbf\{([^}]+)\}/g, '$1')}`).join('\n')}`).join('\n\n')}
 
 ACHIEVEMENTS
-${resumeData.achievements.map(a => `• ${a.replace(/\*\*/g, '')}`).join('\n')}
+${resumeData.achievements.map(a => typeof a === 'string' ? `• ${a.replace(/\*\*/g, '')}` : `• ${a.text.replace(/\*\*/g, '')}${a.linkText || ''}`).join('\n')}
 
 CERTIFICATIONS
 ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')}
     `.trim();
 
     navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    setCopiedText(true);
+    setTimeout(() => setCopiedText(false), 2500);
   };
 
   const handleReset = () => {
@@ -260,7 +566,7 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
       </motion.h2>
 
       <p className="studio-subtitle">
-        Paste any Job Description to generate a tailored, ATS-compliant 1-page resume matching your exact sample template with 1-click vector PDF download.
+        Paste any Job Description to generate a tailored, ATS-compliant 1-page resume matching your exact official LaTeX template with 1-click vector PDF and .tex download.
       </p>
 
       <div className="studio-grid">
@@ -383,15 +689,26 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
           )}
         </motion.div>
 
-        {/* Right Side: Exact LaTeX-Style Sample Resume View */}
+        {/* Right Side: Exact LaTeX-Style Resume View */}
         <div className="resume-preview-container">
           <div className="preview-toolbar">
             <div className="preview-title">
               <FileText size={18} color="#0284c7" />
-              <span>Exact LaTeX Format 1-Page Resume</span>
+              <span>Official LaTeX Academic Resume (1-Page)</span>
             </div>
 
             <div className="toolbar-actions">
+              {/* Toggle Preview / LaTeX Source */}
+              <button 
+                type="button"
+                className={`action-btn ${viewMode === 'preview' ? 'secondary' : 'secondary'}`}
+                onClick={() => setViewMode(viewMode === 'preview' ? 'latex' : 'preview')}
+                title="Toggle between PDF visual preview and LaTeX source code"
+              >
+                {viewMode === 'preview' ? <Code size={16} /> : <Eye size={16} />}
+                {viewMode === 'preview' ? 'View .tex Code' : 'View Preview'}
+              </button>
+
               <button 
                 type="button"
                 className="action-btn primary"
@@ -404,20 +721,20 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
               <button 
                 type="button"
                 className="action-btn secondary"
-                onClick={handlePrintPdf}
-                title="Print preview"
+                onClick={handleDownloadTex}
+                title="Download compilable .tex file"
               >
-                <Printer size={16} /> Print
+                <Download size={15} /> .tex File
               </button>
 
               <button 
                 type="button"
                 className="action-btn secondary"
-                onClick={handleCopyText}
-                title="Copy formatted text"
+                onClick={handleCopyLatex}
+                title="Copy full LaTeX source for Overleaf"
               >
-                {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
-                {copied ? 'Copied!' : 'Copy Text'}
+                {copiedLatex ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
+                {copiedLatex ? 'Copied .tex!' : 'Copy LaTeX'}
               </button>
 
               <button 
@@ -443,141 +760,178 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
             </div>
           </div>
 
-          {/* EXACT LATEX ACADEMIC RESUME SHEET */}
-          <div className="resume-sheet-wrapper">
-            <div 
-              ref={resumePrintRef} 
-              className="resume-paper latex-paper" 
-              contentEditable={editable}
-              suppressContentEditableWarning={true}
-            >
-              {/* Header: Name & Contact */}
-              <header className="latex-header">
-                <h1 className="latex-name">{resumeData.personalInfo.name}</h1>
-                <div className="latex-contact">
-                  <span>{resumeData.personalInfo.phone}</span>
-                  <span className="latex-sep">|</span>
-                  <a href={`mailto:${resumeData.personalInfo.email}`}>{resumeData.personalInfo.email}</a>
-                  <span className="latex-sep">|</span>
-                  <span>{resumeData.personalInfo.location}</span>
-                </div>
-              </header>
-
-              {/* Career Objective */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Career Objective</h2>
-                <p className="latex-objective-text">
-                  {resumeData.careerObjective}
-                </p>
-              </section>
-
-              {/* Education Table */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Education</h2>
-                <table className="latex-edu-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '30%', textAlign: 'left' }}>Study</th>
-                      <th style={{ width: '18%', textAlign: 'left' }}>Year</th>
-                      <th style={{ textAlign: 'left' }}>School / University</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resumeData.education.map((edu, i) => (
-                      <tr key={i}>
-                        <td>{edu.study}</td>
-                        <td>{edu.year}</td>
-                        <td>{edu.school}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </section>
-
-              {/* Technical Skills */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Technical Skills</h2>
-                <div className="latex-skills-block">
-                  {Object.entries(resumeData.technicalSkills).map(([cat, val], i) => (
-                    <div key={i} className="latex-skill-line">
-                      <strong>{cat}:</strong> {val}
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Experience */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Experience</h2>
-                {resumeData.experience.map((exp, i) => (
-                  <div key={i} className="latex-entry">
-                    <div className="latex-row-split">
-                      <strong className="latex-company">{exp.company}</strong>
-                      <span className="latex-italic">{exp.period}</span>
-                    </div>
-                    <div className="latex-row-split" style={{ marginBottom: '3px' }}>
-                      <span className="latex-italic">{exp.role}</span>
-                      <span className="latex-italic">{exp.location}</span>
-                    </div>
-                    <ul className="latex-bullets">
-                      {exp.bullets.map((b, bi) => (
-                        <li key={bi}>– {renderFormatted(b)}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </section>
-
-              {/* Projects */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Projects</h2>
-                {resumeData.projects.map((proj, i) => (
-                  <div key={i} className="latex-entry">
-                    <div className="latex-row-split" style={{ marginBottom: '2px' }}>
-                      <div>
-                        <strong>{proj.title}</strong> | <span className="latex-italic">{proj.techStack}</span>
-                      </div>
-                      {proj.githubUrl && (
-                        <a 
-                          href={proj.githubUrl} 
-                          target="_blank" 
-                          rel="noreferrer" 
-                          className="latex-link"
-                        >
-                          GitHub
-                        </a>
-                      )}
-                    </div>
-                    <ul className="latex-bullets">
-                      {proj.bullets.map((b, bi) => (
-                        <li key={bi}>– {renderFormatted(b)}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </section>
-
-              {/* Achievements */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Achievements</h2>
-                <ul className="latex-bullets-circle">
-                  {resumeData.achievements.map((ach, i) => (
-                    <li key={i}>• {renderFormatted(ach)}</li>
-                  ))}
-                </ul>
-              </section>
-
-              {/* Certifications */}
-              <section className="latex-section">
-                <h2 className="latex-section-title">Certifications</h2>
-                <ul className="latex-bullets-circle">
-                  {resumeData.certifications.map((cert, i) => (
-                    <li key={i}>• {renderFormatted(cert)}</li>
-                  ))}
-                </ul>
-              </section>
+          {/* VIEW: LATEX SOURCE CODE */}
+          {viewMode === 'latex' ? (
+            <div className="latex-code-container">
+              <div className="latex-code-header">
+                <span>LaTeX Source (compilable with pdflatex / Overleaf)</span>
+                <button 
+                  onClick={handleCopyLatex}
+                  className="action-btn secondary"
+                  style={{ padding: '0.35rem 0.8rem', fontSize: '0.8rem' }}
+                >
+                  {copiedLatex ? 'Copied!' : 'Copy Code'}
+                </button>
+              </div>
+              <pre className="latex-code-block">
+                {generateLatexFileContent(resumeData)}
+              </pre>
             </div>
-          </div>
+          ) : (
+            /* VIEW: EXACT LATEX ACADEMIC RESUME SHEET */
+            <div className="resume-sheet-wrapper">
+              <div 
+                ref={resumePrintRef} 
+                className="resume-paper latex-paper" 
+                contentEditable={editable}
+                suppressContentEditableWarning={true}
+              >
+                {/* 1. Header: Name & Contact */}
+                <header className="latex-header">
+                  <h1 className="latex-name">{resumeData.personalInfo.name}</h1>
+                  <div className="latex-contact">
+                    <span>{resumeData.personalInfo.phone}</span>
+                    <span className="latex-sep">$|$</span>
+                    <a href={`mailto:${resumeData.personalInfo.email}`}>{resumeData.personalInfo.email}</a>
+                    <span className="latex-sep">$|$</span>
+                    <span>{resumeData.personalInfo.location}</span>
+                  </div>
+                </header>
+
+                {/* 2. Career Objective (Section 1 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Career Objective</h2>
+                  <p className="latex-objective-text">
+                    {resumeData.careerObjective}
+                  </p>
+                </section>
+
+                {/* 3. Technical Skills (Section 2 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Technical Skills</h2>
+                  <div className="latex-skills-block">
+                    {Object.entries(resumeData.technicalSkills).map(([cat, val], i) => (
+                      <div key={i} className="latex-skill-line">
+                        <strong>{cat}:</strong> {val}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 4. Education (Section 3 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Education</h2>
+                  <table className="latex-edu-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '40%', textAlign: 'left' }}>Study</th>
+                        <th style={{ width: '22%', textAlign: 'left' }}>Year</th>
+                        <th style={{ textAlign: 'left' }}>School / University</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {resumeData.education.map((edu, i) => (
+                        <tr key={i}>
+                          <td>{edu.study}</td>
+                          <td>{edu.year.replace(/--/g, '–')}</td>
+                          <td>{edu.school}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+
+                {/* 5. Experience (Section 4 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Experience</h2>
+                  {resumeData.experience.map((exp, i) => (
+                    <div key={i} className="latex-entry">
+                      <div className="latex-row-split">
+                        <strong className="latex-company">{exp.company}</strong>
+                        <span>{exp.period.replace(/--/g, '–')}</span>
+                      </div>
+                      <div className="latex-row-split" style={{ marginBottom: '2px' }}>
+                        <span className="latex-italic">{exp.role}</span>
+                        <span className="latex-italic">{exp.location}</span>
+                      </div>
+                      <ul className="latex-bullets">
+                        {exp.bullets.map((b, bi) => (
+                          <li key={bi}>{renderFormatted(b)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+
+                {/* 6. Projects (Section 5 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Projects</h2>
+                  {resumeData.projects.map((proj, i) => (
+                    <div key={i} className="latex-entry">
+                      <div className="latex-row-split" style={{ marginBottom: '2px' }}>
+                        <div>
+                          <strong>{proj.title}</strong> $|$ <span className="latex-italic">{proj.techStack}</span>
+                        </div>
+                        {proj.githubUrl && (
+                          <a 
+                            href={proj.githubUrl} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="latex-link"
+                          >
+                            GitHub
+                          </a>
+                        )}
+                      </div>
+                      <ul className="latex-bullets">
+                        {proj.bullets.map((b, bi) => (
+                          <li key={bi}>{renderFormatted(b)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+
+                {/* 7. Achievements (Section 6 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Achievements</h2>
+                  <ul className="latex-bullets">
+                    {resumeData.achievements.map((ach, i) => {
+                      if (typeof ach === 'string') {
+                        return <li key={i}>{renderFormatted(ach)}</li>;
+                      }
+                      return (
+                        <li key={i}>
+                          {renderFormatted(ach.text)}
+                          {ach.linkUrl && (
+                            <a 
+                              href={ach.linkUrl} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="latex-link"
+                            >
+                              {ach.linkText}
+                            </a>
+                          )}
+                          .
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+
+                {/* 8. Certifications (Section 7 in User's LaTeX) */}
+                <section className="latex-section">
+                  <h2 className="latex-section-title">Certifications</h2>
+                  <ul className="latex-bullets">
+                    {resumeData.certifications.map((cert, i) => (
+                      <li key={i}>{renderFormatted(cert)}</li>
+                    ))}
+                  </ul>
+                </section>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

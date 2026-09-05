@@ -1,5 +1,5 @@
-// Master Resume Data for Manpreet Singh
-// Exactly modeled after Manpreet's official sample resume template.
+// Master Resume Data & LaTeX Generator for Manpreet Singh
+// Based strictly on Manpreet's official LaTeX resume template.
 
 const masterResume = {
   personalInfo: {
@@ -11,6 +11,13 @@ const masterResume = {
     github: "https://github.com/ManpreetSinghGrewal"
   },
   careerObjective: "Computer Science student passionate about building useful and reliable web applications from idea to implementation. Interested in growing as a full-stack developer by working on real-world products, learning from experienced teams, and turning practical challenges into simple, user-friendly solutions.",
+  technicalSkills: {
+    "Programming Languages": "Java, C++, JavaScript",
+    "Web Development": "HTML, CSS, React.js",
+    "Backend": "Node.js, Express.js",
+    "Database": "MongoDB",
+    "Developer Tools": "Git, GitHub, VS Code, Socket.io"
+  },
   education: [
     {
       study: "B.E. CSE",
@@ -28,13 +35,6 @@ const masterResume = {
       school: "The Cambridge School"
     }
   ],
-  technicalSkills: {
-    "Programming Languages": "Java, C++, JavaScript",
-    "Web Development": "HTML, CSS, React.js",
-    "Backend": "Node.js, Express.js",
-    "Database": "MongoDB",
-    "Developer Tools": "Git, GitHub, VS Code, Socket.io"
-  },
   experience: [
     {
       company: "Algoryx Technologies",
@@ -42,9 +42,9 @@ const masterResume = {
       period: "June 2026 – July 2026",
       location: "Remote",
       bullets: [
-        "Built a production-ready **React Admin Dashboard** with reusable and responsive components.",
-        "Developed an animated, responsive **landing page** focused on performance, usability and modern UI interactions.",
-        "Integrated **3D assets** into interactive web experiences and created and published an original 3D model on Algoryx Community."
+        "Built a production-ready \\textbf{React Admin Dashboard} with reusable and responsive components.",
+        "Developed an animated, responsive \\textbf{landing page} focused on performance, usability and modern UI interactions.",
+        "Integrated \\textbf{3D assets} into interactive web experiences and created and published an original 3D model on Algoryx Community."
       ]
     }
   ],
@@ -53,51 +53,311 @@ const masterResume = {
       id: "quiz-arena",
       title: "Quiz Arena",
       techStack: "React.js, Node.js, Express.js, MongoDB, Socket.io, Gemini AI",
-      githubUrl: "https://github.com/ManpreetSinghGrewal",
-      liveUrl: "https://quiz-arena-lake.vercel.app/",
+      githubUrl: "",
       bullets: [
-        "Architected and developed a real-time **multiplayer quiz platform** supporting live matchmaking and interactive battles through **Socket.io**.",
-        "Integrated **Google Gemini AI** with OpenTDB fallback to dynamically generate challenging, topic-specific Computer Science quizzes.",
-        "Developed an **analytics dashboard** to track user performance while storing quiz histories, answers and solutions in **MongoDB**.",
-        "Implemented secure **email OTP authentication**, **JWT authorization** and **bcrypt password hashing** to protect user accounts."
+        "Architected and developed a real-time \\textbf{multiplayer quiz platform} supporting live matchmaking and interactive battles through Socket.io.",
+        "Integrated \\textbf{Google Gemini AI} with OpenTDB fallback to dynamically generate challenging, topic-specific Computer Science quizzes.",
+        "Developed an analytics dashboard to track user performance while storing quiz histories, answers and solutions in \\textbf{MongoDB}.",
+        "Implemented secure \\textbf{email OTP authentication, JWT authorization and bcrypt password hashing} to protect user accounts."
       ]
     },
     {
       id: "siteflow-ai",
       title: "SiteFlow AI",
       techStack: "React.js, JavaScript, Tailwind CSS, Express.js, MongoDB",
-      githubUrl: "https://github.com/ManpreetSinghGrewal",
-      liveUrl: "https://site-flow-ai-eight.vercel.app/",
+      githubUrl: "https://github.com/ManpreetSinghGrewal/SiteFlow-AI",
       bullets: [
-        "Developed an **AI-powered platform** that generates websites from business descriptions and supports the workflow from user input to website preview.",
-        "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using **React.js**.",
-        "Created reusable UI components with **Tailwind CSS** and integrated **Express.js** and **MongoDB** for project storage and backend workflows."
+        "Developed an AI-powered platform that generates websites from business descriptions and supports the workflow from user input to website preview.",
+        "Built responsive dashboards, project management interfaces, navigation systems and AI chat functionality using \\textbf{React.js}.",
+        "Created reusable UI components with \\textbf{Tailwind CSS} and integrated \\textbf{Express.js and MongoDB} for project storage and backend workflows."
       ]
     },
     {
       id: "hosteladda",
       title: "HostelAdda",
       techStack: "React.js, Node.js, WebRTC, Socket.io, MongoDB, Brevo API",
-      githubUrl: "https://github.com/ManpreetSinghGrewal",
-      liveUrl: "https://hosteladda-tawny.vercel.app/",
+      githubUrl: "https://github.com/ManpreetSinghGrewal/HostelAdda",
       bullets: [
-        "Architected an exclusive real-time **video matchmaking & campus lounge platform** featuring 1-on-1 random peer matching and hostel rooms.",
-        "Implemented low-latency audio/video streaming using **WebRTC** and bi-directional **Socket.io** signaling servers.",
-        "Integrated **Brevo API** for 6-digit email OTP verification alongside **Google OAuth 2.0 SSO** for verified student onboarding.",
-        "Engineered **MongoDB** schemas for active session state management, chat persistence, and automated room lifecycle."
+        "Architected an exclusive real-time \\textbf{video matchmaking and campus lounge platform} featuring 1-on-1 random peer matching and hostel rooms.",
+        "Implemented low-latency audio/video streaming using \\textbf{WebRTC} and bi-directional \\textbf{Socket.io} signaling servers.",
+        "Integrated \\textbf{Brevo API} for 6-digit email OTP verification alongside \\textbf{Google OAuth 2.0 SSO} for verified student onboarding.",
+        "Engineered \\textbf{MongoDB} schemas for active session state management, chat persistence, and automated room lifecycle."
       ]
     }
   ],
   achievements: [
-    "**300+ LeetCode problems solved** – LeetCode Profile.",
-    "**Sandbox 2.0 Hackathon Finalist** – Project selected for the final round.",
-    "**University Hackathon** – Selected as the only team among 24 participating groups to advance to the next stage."
+    "\\textbf{300+ LeetCode problems solved} -- \\href{https://leetcode.com/u/ManpreetSG/}{\\underline{LeetCode Profile}}.",
+    "\\textbf{Sandbox 2.0 Hackathon Finalist} -- Project selected for the final round.",
+    "\\textbf{University Hackathon} -- Selected as the \\textbf{only team among 24 participating groups} to advance to the next stage."
   ],
   certifications: [
-    "**Python Foundation Certification**",
-    "**Cybersecurity for Everyone** – University of Maryland (Coursera)",
-    "**Red Hat System Administration I & II** – RH124 & RH134"
+    "\\textbf{Python Foundation Certification}",
+    "\\textbf{Cybersecurity for Everyone} -- University of Maryland (Coursera)",
+    "\\textbf{Red Hat System Administration I \\& II} -- RH124 \\& RH134"
   ]
 };
 
-module.exports = masterResume;
+/**
+ * Generate exact LaTeX source code from the resume data matching user's template
+ */
+function generateLatexCode(data) {
+  const d = data || masterResume;
+
+  // Format skills section
+  const skillsLatex = Object.entries(d.technicalSkills)
+    .map(([category, val]) => `\\textbf{${category}:}\n${val}\n\\\\[4pt]`)
+    .join('\n\n');
+
+  // Format education table rows
+  const educationRows = d.education
+    .map((edu, idx) => {
+      const spacing = idx < d.education.length - 1 ? '\\\\[5pt]' : '';
+      return `${edu.study} &\n${edu.year} &\n${edu.school}\n${spacing}`.trim();
+    })
+    .join('\n\n');
+
+  // Format experience
+  const experienceLatex = d.experience
+    .map(exp => `\\resumeSubheading\n{${exp.company}}{${exp.period}}\n{${exp.role}}{${exp.location}}\n\n\\resumeItemListStart\n${exp.bullets.map(b => `\\resumeItem{\n${b}\n}`).join('\n')}\n\\resumeItemListEnd`)
+    .join('\n\n');
+
+  // Format projects
+  const projectsLatex = d.projects
+    .map(p => {
+      const gitLink = p.githubUrl
+        ? `{\\href{${p.githubUrl}}{\\underline{GitHub}}}`
+        : `{}`;
+      return `\\resumeProjectHeading\n{\\textbf{${p.title}} $|$\n\\emph{${p.techStack}}}\n${gitLink}\n\n\\resumeItemListStart\n${p.bullets.map(b => `\\resumeItem{\n${b}\n}`).join('\n')}\n\\resumeItemListEnd`;
+    })
+    .join('\n\n');
+
+  // Format achievements
+  const achievementsLatex = d.achievements
+    .map(a => `\\resumeItem{\n${a}\n}`)
+    .join('\n');
+
+  // Format certifications
+  const certificationsLatex = d.certifications
+    .map(c => `\\resumeItem{\n${c}\n}`)
+    .join('\n');
+
+  return `%-------------------------
+% Resume in Latex
+% Customized for Manpreet Singh
+%------------------------
+
+\\documentclass[letterpaper,10pt]{article}
+
+\\usepackage{latexsym}
+\\usepackage[empty]{fullpage}
+\\usepackage{titlesec}
+\\usepackage{marvosym}
+\\usepackage[usenames,dvipsnames]{color}
+\\usepackage{verbatim}
+\\usepackage{enumitem}
+\\usepackage[hidelinks]{hyperref}
+\\usepackage{fancyhdr}
+\\usepackage[english]{babel}
+\\usepackage{tabularx}
+\\input{glyphtounicode}
+
+%----------FONT----------
+\\usepackage[T1]{fontenc}
+\\usepackage{lmodern}
+
+%----------PAGE STYLE----------
+\\pagestyle{fancy}
+\\fancyhf{}
+\\fancyfoot{}
+\\renewcommand{\\headrulewidth}{0pt}
+\\renewcommand{\\footrulewidth}{0pt}
+
+%----------MARGINS----------
+\\addtolength{\\oddsidemargin}{-0.55in}
+\\addtolength{\\evensidemargin}{-0.55in}
+\\addtolength{\\textwidth}{1.1in}
+\\addtolength{\\topmargin}{-0.62in}
+\\addtolength{\\textheight}{1.22in}
+
+\\urlstyle{same}
+\\raggedbottom
+\\raggedright
+\\setlength{\\tabcolsep}{0in}
+
+%----------SECTION FORMATTING----------
+\\titleformat{\\section}
+{\\scshape\\raggedright\\large}
+{}{0em}{}
+[\\color{black}\\titlerule]
+
+\\titlespacing{\\section}
+{0pt}{9pt}{5pt}
+
+%----------ATS----------
+\\pdfgentounicode=1
+
+%----------CUSTOM COMMANDS----------
+
+\\newcommand{\\resumeItem}[1]{
+    \\item\\small{#1}
+}
+
+\\newcommand{\\resumeSubheading}[4]{
+    \\vspace{2pt}
+    \\item
+    \\begin{tabular*}{0.97\\textwidth}[t]{
+        l@{\\extracolsep{\\fill}}r
+    }
+        \\textbf{#1} & #2 \\\\
+        \\textit{\\small#3} & \\textit{\\small#4} \\\\
+    \\end{tabular*}
+    \\vspace{-3pt}
+}
+
+\\newcommand{\\resumeProjectHeading}[2]{
+    \\vspace{2pt}
+    \\item
+    \\begin{tabular*}{0.97\\textwidth}{
+        l@{\\extracolsep{\\fill}}r
+    }
+        \\small#1 & #2 \\\\
+    \\end{tabular*}
+    \\vspace{-2pt}
+}
+
+\\newcommand{\\resumeSubHeadingListStart}{
+    \\begin{itemize}[
+        leftmargin=0.15in,
+        label={},
+        itemsep=0pt,
+        topsep=0pt,
+        parsep=0pt
+    ]
+}
+
+\\newcommand{\\resumeSubHeadingListEnd}{
+    \\end{itemize}
+}
+
+\\newcommand{\\resumeItemListStart}{
+    \\begin{itemize}[
+        leftmargin=0.18in,
+        itemsep=2pt,
+        topsep=2pt,
+        parsep=0pt
+    ]
+}
+
+\\newcommand{\\resumeItemListEnd}{
+    \\end{itemize}
+}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%
+%-------------------------------------------
+
+\\begin{document}
+
+%----------HEADING----------
+
+\\begin{center}
+
+    \\textbf{\\Huge \\scshape ${d.personalInfo.name}}\\\\[3pt]
+
+    \\small
+    ${d.personalInfo.phone} $|$
+    \\href{mailto:${d.personalInfo.email}}
+    {\\underline{${d.personalInfo.email}}} $|$
+    ${d.personalInfo.location}
+
+\\end{center}
+
+\\vspace{2pt}
+
+%-----------CAREER OBJECTIVE-----------
+
+\\section{Career Objective}
+
+\\small{
+${d.careerObjective}
+}
+
+%-----------TECHNICAL SKILLS-----------
+
+\\section{Technical Skills}
+
+\\small{
+
+${skillsLatex}
+
+}
+
+%-----------EDUCATION-----------
+
+\\section{Education}
+
+\\renewcommand{\\arraystretch}{1.25}
+
+\\begin{tabularx}{\\textwidth}{
+p{4.2cm} p{1.8cm} X
+}
+
+\\textbf{Study} &
+\\textbf{Year} &
+\\textbf{School / University}
+\\\\[5pt]
+
+${educationRows}
+
+\\end{tabularx}
+
+\\vspace{5pt}
+
+%-----------EXPERIENCE-----------
+
+\\section{Experience}
+
+\\resumeSubHeadingListStart
+
+${experienceLatex}
+
+\\resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+
+\\section{Projects}
+
+\\resumeSubHeadingListStart
+
+${projectsLatex}
+
+\\resumeSubHeadingListEnd
+
+%-----------ACHIEVEMENTS-----------
+
+\\section{Achievements}
+
+\\resumeItemListStart
+
+${achievementsLatex}
+
+\\resumeItemListEnd
+
+%-----------CERTIFICATIONS-----------
+
+\\section{Certifications}
+
+\\resumeItemListStart
+
+${certificationsLatex}
+
+\\resumeItemListEnd
+
+\\end{document}
+`;
+}
+
+module.exports = {
+  masterResume,
+  generateLatexCode
+};
