@@ -577,7 +577,12 @@ const ResumeStudio = () => {
   };
 
   const handlePrintPdf = () => {
+    const originalTitle = document.title;
+    document.title = 'Manpreet_Singh_Resume';
     window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
   };
 
   const handleDownloadTex = () => {
