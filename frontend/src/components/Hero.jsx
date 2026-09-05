@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Code2 } from 'lucide-react';
 import manpreetHero from '../assets/manpreet-hero.png';
 import '../styles/Hero.css';
 
@@ -61,27 +60,6 @@ const Hero = () => {
               loading="eager"
             />
           </div>
-
-          {/* Floating Glass Pill Badges */}
-          <motion.div 
-            className="hero-floating-badge badge-top-right glass-panel"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            <Sparkles size={16} className="badge-icon-sparkle" />
-            <span>Chitkara • <strong>9.26 CGPA</strong></span>
-          </motion.div>
-
-          <motion.div 
-            className="hero-floating-badge badge-bottom-left glass-panel"
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-          >
-            <Code2 size={16} className="badge-icon-code" />
-            <span>Full-Stack & AI Engineer</span>
-          </motion.div>
         </div>
       </motion.div>
     </section>

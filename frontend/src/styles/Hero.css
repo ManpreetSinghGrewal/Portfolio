@@ -193,48 +193,7 @@
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Floating Liquid Glass Badges */
-.hero-floating-badge {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.15rem;
-  border-radius: 30px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  z-index: 3;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  white-space: nowrap;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  transition: transform 0.3s ease;
-}
 
-.hero-floating-badge:hover {
-  transform: translateY(-2px);
-}
-
-.badge-top-right {
-  top: 15px;
-  right: -15px;
-}
-
-.badge-bottom-left {
-  bottom: 25px;
-  left: -20px;
-}
-
-.badge-icon-sparkle {
-  color: #f59e0b;
-}
-
-.badge-icon-code {
-  color: var(--accent-color);
-}
 
 /* Responsive */
 @media (max-width: 1100px) {
@@ -285,19 +244,7 @@
     height: 290px;
   }
 
-  .badge-top-right {
-    top: 5px;
-    right: -5px;
-    font-size: 0.8rem;
-    padding: 0.45rem 0.9rem;
-  }
 
-  .badge-bottom-left {
-    bottom: 10px;
-    left: -5px;
-    font-size: 0.8rem;
-    padding: 0.45rem 0.9rem;
-  }
 }
 
 @media (max-width: 480px) {
