@@ -787,27 +787,27 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                 suppressContentEditableWarning={true}
               >
                 {/* 1. Header: Name & Contact */}
-                <header className="latex-header">
+                <div className="latex-header">
                   <h1 className="latex-name">{resumeData.personalInfo.name}</h1>
                   <div className="latex-contact">
                     <span>{resumeData.personalInfo.phone}</span>
-                    <span className="latex-sep">$|$</span>
+                    <span className="latex-sep">|</span>
                     <a href={`mailto:${resumeData.personalInfo.email}`}>{resumeData.personalInfo.email}</a>
-                    <span className="latex-sep">$|$</span>
+                    <span className="latex-sep">|</span>
                     <span>{resumeData.personalInfo.location}</span>
                   </div>
-                </header>
+                </div>
 
                 {/* 2. Career Objective (Section 1 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Career Objective</h2>
                   <p className="latex-objective-text">
                     {resumeData.careerObjective}
                   </p>
-                </section>
+                </div>
 
                 {/* 3. Technical Skills (Section 2 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Technical Skills</h2>
                   <div className="latex-skills-block">
                     {Object.entries(resumeData.technicalSkills).map(([cat, val], i) => (
@@ -816,10 +816,10 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                       </div>
                     ))}
                   </div>
-                </section>
+                </div>
 
                 {/* 4. Education (Section 3 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Education</h2>
                   <table className="latex-edu-table">
                     <thead>
@@ -839,10 +839,10 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                       ))}
                     </tbody>
                   </table>
-                </section>
+                </div>
 
                 {/* 5. Experience (Section 4 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Experience</h2>
                   {resumeData.experience.map((exp, i) => (
                     <div key={i} className="latex-entry">
@@ -861,16 +861,16 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                       </ul>
                     </div>
                   ))}
-                </section>
+                </div>
 
                 {/* 6. Projects (Section 5 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Projects</h2>
                   {resumeData.projects.map((proj, i) => (
                     <div key={i} className="latex-entry">
                       <div className="latex-row-split" style={{ marginBottom: '2px' }}>
                         <div>
-                          <strong>{proj.title}</strong> $|$ <span className="latex-italic">{proj.techStack}</span>
+                          <strong>{proj.title}</strong> | <span className="latex-italic">{proj.techStack}</span>
                         </div>
                         {proj.githubUrl && (
                           <a 
@@ -890,10 +890,10 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                       </ul>
                     </div>
                   ))}
-                </section>
+                </div>
 
                 {/* 7. Achievements (Section 6 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Achievements</h2>
                   <ul className="latex-bullets">
                     {resumeData.achievements.map((ach, i) => {
@@ -918,17 +918,17 @@ ${resumeData.certifications.map(c => `• ${c.replace(/\*\*/g, '')}`).join('\n')
                       );
                     })}
                   </ul>
-                </section>
+                </div>
 
                 {/* 8. Certifications (Section 7 in User's LaTeX) */}
-                <section className="latex-section">
+                <div className="latex-section">
                   <h2 className="latex-section-title">Certifications</h2>
                   <ul className="latex-bullets">
                     {resumeData.certifications.map((cert, i) => (
                       <li key={i}>{renderFormatted(cert)}</li>
                     ))}
                   </ul>
-                </section>
+                </div>
               </div>
             </div>
           )}

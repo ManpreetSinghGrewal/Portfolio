@@ -75,12 +75,12 @@
   }
 }
 
-section, header, footer, nav {
+.App > section, .App > header, .App > footer, .App > nav {
   position: relative;
   z-index: 1;
 }
 
-section {
+.App > section {
   padding: 100px 10vw;
   min-height: 100vh;
   display: flex;
@@ -97,7 +97,7 @@ section {
 }
 
 @media (max-width: 768px) {
-  section {
+  .App > section {
     padding: 80px 5vw;
   }
   .section-title {
