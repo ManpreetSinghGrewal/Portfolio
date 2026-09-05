@@ -1,10 +1,11 @@
+.App > section.hero-section,
 .hero-section {
-  display: flex;
-  flex-direction: row;
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center;
   justify-content: space-between;
   min-height: 100vh;
-  padding: 0 10vw;
+  padding: 0 10vw !important;
   position: relative;
 }
 
@@ -100,10 +101,11 @@
 }
 
 @media (max-width: 968px) {
+  .App > section.hero-section,
   .hero-section {
-    flex-direction: column-reverse;
+    flex-direction: column-reverse !important;
     text-align: center;
-    padding-top: 120px;
+    padding-top: 120px !important;
   }
   
   .hero-content {

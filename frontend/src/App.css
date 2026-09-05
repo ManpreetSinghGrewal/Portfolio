@@ -80,7 +80,7 @@
   z-index: 1;
 }
 
-.App > section {
+.App > section:not(.hero-section) {
   padding: 100px 10vw;
   min-height: 100vh;
   display: flex;
@@ -97,7 +97,7 @@
 }
 
 @media (max-width: 768px) {
-  .App > section {
+  .App > section:not(.hero-section) {
     padding: 80px 5vw;
   }
   .section-title {
